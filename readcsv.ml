@@ -94,8 +94,8 @@ let from_csv file = {
 }
 
 let print_csv tbl file = 
-  let oc = open_out file in 
-  for i = 1 to Hashtbl.length tbl do
+  let oc = open_out_gen [Open_append] 0o640 file in 
+  for i = 1 to Hashtbl.length tbl do    
     Printf.fprintf oc "\n";
     Printf.fprintf oc "Column %d:" i;
     Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find tbl i)
