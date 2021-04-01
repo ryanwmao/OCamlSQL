@@ -98,7 +98,8 @@ let print_csv t file =
   for i = 1 to Hashtbl.length t.lines do    
     Printf.fprintf oc "\n";
     Printf.fprintf oc "Column %d:" i;
-    Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find t.lines i)
+    Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find t.lines i);
   done;
+  Printf.fprintf oc "\n";
   close_out_noerr oc
 
