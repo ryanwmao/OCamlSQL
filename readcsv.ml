@@ -14,6 +14,15 @@ let quote_escape str =
 
 let comma str =
   Str.split (Str.regexp ",") str
+
+let trim str = 
+  if String.length str < 1 then str 
+  else 
+    let sub = String.sub str ((String.length str) - 1) 1 in
+    if sub = "\r" || sub = "\n" 
+      then String.sub str 0 ((String.length str) - 1)
+    else 
+      str
   
 let handle_line str = 
   str |> comma |> List.map trim_quotes |> List.map quote_escape
@@ -52,6 +61,11 @@ let rec parseline tbl (str_list : string list) i =
       Hashtbl.replace tbl i (Array.append (Hashtbl.find tbl i) arr); 
       parseline tbl t (i + 1)
 
+let trim_check tbl =
+    let last = Hashtbl.length tbl in 
+    let arr = Array.map trim (Hashtbl.find tbl last) in
+    Hashtbl.replace tbl last arr
+
 let odd_quotes str = failwith "Unimplemented"
 
 let readlines file = 
@@ -72,10 +86,9 @@ let readlines file =
       parseline table line_list 1
     done; table
   with 
-    End_of_file -> close_in_noerr channel; table
+    End_of_file -> close_in_noerr channel; trim_check table; table
 
   
-
 let from_csv file = {
   lines = readlines file
 }
