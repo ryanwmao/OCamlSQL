@@ -2,3 +2,4 @@ B _build
 PKG ounit2
 PKG csv
 PKG ANSITerminal
+PKG str

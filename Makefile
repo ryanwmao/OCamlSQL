@@ -1,4 +1,4 @@
-MODULES= #add
+MODULES= command_parser readcsv main author 
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
@@ -12,6 +12,9 @@ default: build
 
 build:
 	$(OCAMLBUILD) $(OBJECTS)
+
+demo:
+	$(OCAMLBUILD) -tag 'debug' $(MAIN) && OCAMLRUNPARAM=b ./$(MAIN)
 
 test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
