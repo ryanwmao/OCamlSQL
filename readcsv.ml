@@ -93,12 +93,12 @@ let from_csv file = {
   lines = readlines file
 }
 
-let print_csv tbl file = 
+let print_csv t file = 
   let oc = open_out_gen [Open_append] 0o640 file in 
-  for i = 1 to Hashtbl.length tbl do    
+  for i = 1 to Hashtbl.length t.lines do    
     Printf.fprintf oc "\n";
     Printf.fprintf oc "Column %d:" i;
-    Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find tbl i)
+    Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find t.lines i)
   done;
   close_out_noerr oc
 
