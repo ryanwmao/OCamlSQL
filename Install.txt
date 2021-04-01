@@ -1,0 +1,11 @@
+#Installation
+
+1. After opening the zip file, type ''make build'' in the terminal to build our system.
+2. Now type ''make demo'' in the terminal: this is our demo for MS1 and shows the current visible functionality of our system.
+
+#Demo/Run
+
+1. You will be prompted after running ''make demo'' to type in a file name. Type in the file name with data that you would like to import. 
+NOTE: The file must be formatted in CSV format and must be located inside the OCamlSQL folder. 
+2. You will next be prompted to type in the file name that you would like to export data to. We have provided an empty demo.txt file that you may use. 
+NOTE: Your output file may become cluttered after exporting various times. To fix this, you can either create a new txt file or open the current output file and delete the data contained. 
