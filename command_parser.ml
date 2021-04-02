@@ -1,6 +1,29 @@
 (* #load "Str.cma" *)
 (* grammar: https://forcedotcom.github.io/phoenix/index.html#expression*)
 
+let punc = [
+  "(";
+  ")";
+  ";";
+  ",";
+  "=";
+  ">";
+  "<";
+  "!";
+];;
+
+let quotes = [
+  "\"";
+  "\'";
+]
+
+let ignore = [
+  " ";
+  "\t";
+  "\n";
+  "\r"; 
+]
+
 type arithmetic_expr = 
   | Integer of int
   | Float of float
@@ -47,7 +70,7 @@ type query = {
   order_by : order_by list
 }
 
-type temp_query = {
+type tokens = {
   select : string list;
   from: string list;
   where : string list;
@@ -75,15 +98,35 @@ let rec parse_query_list lst start_keyword end_keywords =
     else (lst, [])
   | [] -> (lst, [])
 
+let str_to_tokens str = 
+  let length = String.length str in 
+  let rec helper tokens start_idx len = 
+    if start_idx + len >= length then (String.sub str start_idx len) :: tokens
+    else 
+      let x = String.sub str (start_idx + len) 1 in 
+      let y = String.sub str start_idx len in
+      if contains punc x
+      then helper (x :: y:: tokens) 
+          (start_idx + len + 1) 0
+      else if contains ignore x
+      then helper (y :: tokens) 
+          (start_idx + len + 1) 0
+      else if contains quotes x 
+      then (
+        let second_quote_index = String.index_from str (start_idx + len + 1) (String.get x 0) in
+        let z = String.sub str (start_idx + len) (second_quote_index - (start_idx + len) + 1) in 
+        helper (z :: y :: tokens) (second_quote_index + 1) 0
+      )
+      else helper tokens start_idx (len + 1)
+  in List.filter (fun x -> x <> "") (List.rev (helper [] 0 0))
 
-
-let parse_query q = 
-  let split = String.split_on_char ' ' q in
-  let split, sel = parse_query_list split "select" ["from"] in 
-  let split, from = parse_query_list split "from" ["where"; "group"; "order"] in
-  let split, where = parse_query_list split "where" ["group"; "order"] in
-  let split, group = parse_query_list split "group" ["order"] in 
-  let split, order = parse_query_list split "order" [] in
+let tokenizer q = 
+  let tokens = str_to_tokens q in
+  let tokens, sel = parse_query_list tokens "select" ["from"] in 
+  let tokens, from = parse_query_list tokens "from" ["where"; "group"; "order"] in
+  let tokens, where = parse_query_list tokens "where" ["group"; "order"] in
+  let tokens, group = parse_query_list tokens "group" ["order"] in 
+  let tokens, order = parse_query_list tokens "order" [] in
   {
     select = sel;
     from = from;
@@ -91,6 +134,9 @@ let parse_query q =
     group_by = if group = [] then [] else List.tl group; (* the whole keyword is actually GROUP BY *)
     order_by = if order = [] then [] else List.tl order; (* the whole keyword is actually ORDER BY *)
   }
+
+let test = tokenizer "SELECT A, B, C * D, \"C FROM D\" FROM table1    WHERE A.a = B.b AND C.c = D.d GROUP BY C * 2 ORDER BY C"
+
 
 
 
