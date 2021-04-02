@@ -70,7 +70,7 @@ type query = {
   order_by : order_by list
 }
 
-type tokens = {
+type query_tokens = {
   select : string list;
   from: string list;
   where : string list;
@@ -135,9 +135,22 @@ let tokenizer q =
     order_by = if order = [] then [] else List.tl order; (* the whole keyword is actually ORDER BY *)
   }
 
+
+let print_query_tokens q_tokens = 
+  print_string "SELECT Clause: ";
+  print_string (String.concat " " (q_tokens.select));
+  print_string "\n";
+  print_string "FROM Clause: ";
+  print_string (String.concat " " (q_tokens.from));
+  print_string "\n";
+  print_string "WHERE Clause: ";
+  print_string (String.concat " " (q_tokens.where));
+  print_string "\n";
+  print_string "GROUP BY Clause: ";
+  print_string (String.concat " " (q_tokens.group_by));
+  print_string "\n";
+  print_string "ORDER BY Clause: ";
+  print_string (String.concat " " (q_tokens.order_by));
+  print_string "\n"
+
 let test = tokenizer "SELECT A, B, C * D, \"C FROM D\" FROM table1    WHERE A.a = B.b AND C.c = D.d GROUP BY C * 2 ORDER BY C"
-
-
-
-
-
