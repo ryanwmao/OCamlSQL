@@ -1,6 +1,11 @@
 
+(* int = column number, string array = elements*)
 type t = {
   mutable lines: (int, string array) Hashtbl.t
+}
+
+let empty = {
+  lines = Hashtbl.create 0
 }
 
 let trim_quotes str = 
@@ -93,13 +98,18 @@ let from_csv file = {
   lines = readlines file
 }
 
-let print_csv t file = 
-  let oc = open_out_gen [Open_append] 0o640 file in 
+let print_csv t name = 
+  let oc = open_out_gen [Open_creat] 0o640 ("../workspace/"^name) in 
   for i = 1 to Hashtbl.length t.lines do    
     Printf.fprintf oc "\n";
-    Printf.fprintf oc "Column %d:" i;
     Array.iter (fun x -> Printf.fprintf oc " %s," x) (Hashtbl.find t.lines i);
   done;
-  Printf.fprintf oc "\n";
   close_out_noerr oc
 
+let read_workspace name = 
+  { lines = readlines ("../workspace/"^name) }
+
+let column t name = 
+  let rec search index = if Array.get (Hashtbl.find t.lines index) 0 = name 
+      then Hashtbl.find t.lines index else search (index + 1) in
+  let column = search 1 in column

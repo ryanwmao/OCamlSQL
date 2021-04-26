@@ -12,3 +12,8 @@ val from_csv : string -> t
 
 val print_csv : t -> string -> unit
 
+val read_workspace : string -> t
+
+val empty: t
+
+val column : t -> string -> string array

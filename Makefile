@@ -1,4 +1,4 @@
-MODULES= command_parser readcsv main author 
+MODULES= command_parser readcsv main author workspace
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)

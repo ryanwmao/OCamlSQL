@@ -153,4 +153,11 @@ let print_query_tokens q_tokens =
   print_string (String.concat " " (q_tokens.order_by));
   print_string "\n"
 
+let select_tokens q_tokens = q_tokens.select
+let from_tokens q_tokens = q_tokens.from
+let where_tokens q_tokens = q_tokens.where
+let group_by_tokens q_tokens = q_tokens.group_by
+
+let order_by_tokens q_tokens = q_tokens.order_by
+
 let test = tokenizer "SELECT A, B, C * D, \"C FROM D\" FROM table1    WHERE A.a = B.b AND C.c = D.d GROUP BY C * 2 ORDER BY C"
