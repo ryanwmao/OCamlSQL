@@ -6,7 +6,7 @@ let read_csv file =
     "Please enter the name of the file you want to output to.\n";
     match read_line () with 
     | exception a -> ()
-    | file_name -> print_csv (from_csv file) file_name ""
+    | file_name -> print_csv (from_csv file) file_name
   (*Readcsv.from_csv file;
   print_endline
     "Please enter the name of the file you want to output to.\n";
