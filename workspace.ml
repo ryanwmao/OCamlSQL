@@ -43,7 +43,7 @@ let execute_command q_tokens outputfile =
   | h :: t -> h) in
   let from2 = Readcsv.from_csv from in
   let oc = open_out_gen [Open_creat] 0o640 outputfile in 
-  let selects = Command_parser.select_tokens q_tokens in
+  let selects = Command_parser.select_tokens q_tokens |> List.filter (fun x -> x <> ",") in
     print_selects from2 outputfile selects;
   close_out_noerr oc
 
