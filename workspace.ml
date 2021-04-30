@@ -22,15 +22,19 @@ let print_array arr outputfile =
   Printf.fprintf oc "\n" 
 
 let rec find tables name i = 
+  if (i > Array.length tables + 5) then
   try 
     column tables.(i) name
   with  
-    Invalid_argument n -> find tables name (i+1)
+    | Invalid_argument n -> find tables name (i+1)
+    | Not_found -> find tables name (i + 1)
+  else
+    raise Select_not_found
 
 
 let rec print_selects from oc selects = match selects with
   | [] -> ()
-  | h :: t -> print_array (find from h 0) oc (*try print_array (find from h 0) oc; print_selects from oc t
+  | h :: t -> print_array (column from h) oc; print_selects from oc t (*try print_array (find from h 0) oc; print_selects from oc t
       with Invalid_argument n -> raise Select_not_found *)
 
 let execute_command q_tokens outputfile = 
@@ -40,7 +44,7 @@ let execute_command q_tokens outputfile =
   let from2 = Readcsv.from_csv from in
   let oc = open_out_gen [Open_creat] 0o640 outputfile in 
   let selects = Command_parser.select_tokens q_tokens in
-    print_selects [|from2|] outputfile selects;
+    print_selects from2 outputfile selects;
   close_out_noerr oc
 
 let read_command com name =   

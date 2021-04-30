@@ -18,7 +18,7 @@ let quote_escape str =
   Str.global_replace (Str.regexp "\"\"") "\"" str 
 
 let comma str =
-  Str.split (Str.regexp ",") str
+  Str.split (Str.regexp ",") str |> List.map String.trim
 
 let trim str = 
   if String.length str < 1 then str 
