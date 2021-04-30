@@ -16,7 +16,8 @@ let load_table name file =
 exception Table_not_found
 exception Select_not_found
 
-let print_array arr oc = 
+let print_array arr outputfile = 
+  let oc = open_out_gen [ Open_append] 0o640 outputfile in 
   Array.iter (fun x -> Printf.fprintf oc " %s," x) arr;
   Printf.fprintf oc "\n" 
 
@@ -26,32 +27,22 @@ let rec find tables name i =
   with  
     Invalid_argument n -> find tables name (i+1)
 
-let print_arr arr = 
-  Array.iter (fun x -> print_string x) arr;
-  print_endline
-    "\n"
 
+let rec print_selects from oc selects = match selects with
+  | [] -> ()
+  | h :: t -> print_array (find from h 0) oc (*try print_array (find from h 0) oc; print_selects from oc t
+      with Invalid_argument n -> raise Select_not_found *)
 
-let execute_command q_tokens name = 
-  let length = List.length (Command_parser.from_tokens q_tokens) in
-  let tables = Array.make length empty in
-  let index = ref 0 in
-  let guard = ref true in
-    while !guard do
-    (  match Command_parser.from_tokens q_tokens with 
-      | [] -> guard := false
-      | h :: t -> tables.(!index) <- (from_csv name)(*read_workspace h)*);)
-    done;
-
-  let oc = open_out_gen [Open_creat; Open_append] 0o640 ((*"../workspace/"^*)name) in 
-  guard := true;
-  while !guard do
-    (match Command_parser.select_tokens q_tokens with 
-    | [] -> guard := false
-    | h :: t -> try print_array (find tables h (*1*) 0) oc
-                with Invalid_argument n -> raise Select_not_found) done;
+let execute_command q_tokens outputfile = 
+  let from = (match Command_parser.from_tokens q_tokens with
+  | [] -> failwith "no from "
+  | h :: t -> h) in
+  let from2 = Readcsv.from_csv from in
+  let oc = open_out_gen [Open_creat] 0o640 outputfile in 
+  let selects = Command_parser.select_tokens q_tokens in
+    print_selects [|from2|] outputfile selects;
   close_out_noerr oc
 
-let read_command com =   
+let read_command com name =   
   let q_tokens = Command_parser.tokenizer com in 
-  execute_command q_tokens
+  execute_command q_tokens name
