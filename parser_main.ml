@@ -29,12 +29,7 @@ and step_bop bop e1 e2 = match bop, e1, e2 with
   | Add, _, _ | Sub, _, _ | Mult, _, _ | Div, _, _ | Mod, _, _ 
     -> failwith "argument error"
 
-let rec step_cond = function
-  | Bool _ | CondTableField _ -> failwith "No step"
-  | Negation e1 when is_cond_value e1 -> step_neg e1
-  | Negation e1 -> Negation ()
-  | BoolOp _ | Relation _ -> false
-
+let rec step_cond = failwith ""
 and step_neg e1 = failwith ""
 
 
