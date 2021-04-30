@@ -1,11 +1,14 @@
 #Installation
 
 1. After opening the zip file, type ''make build'' in the terminal to build our system.
-2. Now type ''make demo'' in the terminal: this is our demo for MS1 and shows the current visible functionality of our system.
+2. Now type ''make demo'' in the terminal: this is our demo for MS2 and shows our latest feature.
 
 #Demo/Run
-0. After running 'make demo', you will be asked to type in an SQL query; we will print out the tokenized and sorted version of this query.
-1. Next, you will be asked to type in a file name. Type in the file name with data that you would like to import. 
-NOTE: The file must be formatted in CSV format and must be located inside the OCamlSQL folder. 
-2. You will next be prompted to type in the file name that you would like to export data to. We have provided an empty demo.txt file that you may use. 
-NOTE: Your output file may become cluttered after exporting various times. To fix this, you can either create a new txt file or open the current output file and delete the data contained. 
+After running 'make demo', you will be asked to type in an SQL query; this can currently
+only be of the form "select X from Y", where X are existing column names from the csv-formatted
+files in Y. For example, "Select 1958, Month from airtravel.csv" is a supported query.
+The output of every demo session query is located in the demo.txt file, which can be
+manually cleared as needed. 
+
+The demo file displays each selected column as a row, in the order that they 
+were entered in to the "X" field in the example query above. 
