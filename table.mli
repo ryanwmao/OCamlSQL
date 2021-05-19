@@ -10,6 +10,9 @@ val from_csv : string -> t
 (* Print a database table to a local file *)
 val export_csv : t -> string -> unit
 
+(* Converts a database table to a CSV-formatted string *)
+val export_string : t -> string
+
 (* An empty database table *)
 val empty : t
 

@@ -54,7 +54,10 @@ let trim_check tbl =
   let arr = Array.map trim (Hashtbl.find tbl last) in
   Hashtbl.replace tbl last arr
 
-let odd_quotes str = failwith "Unimplemented"
+(* oddquotes might not be right thing to check, maybe check whether char
+   before \n is a quote? *)
+let odd_quotes str =
+  List.length (String.split_on_char '\"' str) mod 2 = 0
 
 let readcsv file =
   let c1 = open_in file in
@@ -65,9 +68,12 @@ let readcsv file =
     while true do
       let line = ref (input_line channel) in
       let line2 =
-        (*if odd_quotes line then (while odd_quotes line do line :=
-          !line ^ "\n" ^ input_line channel done; !line) else*)
-        !line
+        if odd_quotes !line then (
+          while odd_quotes !line do
+            line := !line ^ "\n" ^ input_line channel
+          done;
+          !line)
+        else !line
       in
       let line_list = handle_line line2 in
       parseline table line_list 1
@@ -77,3 +83,25 @@ let readcsv file =
     close_in_noerr channel;
     trim_check table;
     table
+
+let rec handle_string_quotes acc tmp = function
+  | [] -> List.rev acc
+  | h :: t ->
+      if odd_quotes h then handle_string_quotes acc (h ^ tmp) t
+      else handle_string_quotes (h :: acc) "" t
+
+let rec parselines table rows i =
+  match rows with [] -> () | h :: t -> parseline table h 1
+
+let readstring str =
+  let str_rows = String.split_on_char '\n' str in
+  let rows =
+    List.map handle_line (handle_string_quotes [] "" str_rows)
+  in
+  let table =
+    match rows with
+    | [] -> create_table 0
+    | h :: t -> create_table (List.length h)
+  in
+  parselines table rows 1;
+  table

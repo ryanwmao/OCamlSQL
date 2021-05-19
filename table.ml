@@ -31,6 +31,20 @@ let export_csv t name =
   done;
   close_out_noerr oc
 
+let export_string t =
+  let str = ref "" in
+  for i = 1 to Hashtbl.length t.lines do
+    let temp =
+      Array.fold_left
+        (fun x -> ( ^ ) (x ^ ", "))
+        ""
+        (Hashtbl.find t.lines i)
+    in
+    let line = String.sub temp 2 (String.length temp - 2) in
+    str := !str ^ "\n" ^ line
+  done;
+  !str
+
 (* Given a table [t], column name [name], and starting [index],
    recursively searches for a column whose first entry (i.e., column
    name) matches [name], and returns that name. *)
