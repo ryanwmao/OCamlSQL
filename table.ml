@@ -81,16 +81,56 @@ let rec multi_search tbl_lst col_lst acc =
 
 (* Given a [bool_lst] of booleans and a [col] database column, returns a
    column with entries corresponding to the true entries in [bool_lst].
-   Raises [Length_mismatch] if length bool_lst <> length col *)
-let rec where_col_filter bool_lst col acc =
-  match (bool_lst, col) with
-  | [], [] -> List.rev acc
-  | h1 :: t1, h2 :: t2 ->
-      if h1 then where_col_filter t1 t2 (h2 :: acc)
-      else where_col_filter t1 t2 acc
-  | _ -> raise Length_mismatch
+   REQUIRES length bool_lst = length col *)
+let rec where_col_filter bool_lst col =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      if Array.get bool_lst i then
+        return := Array.append !return [| Array.get col i |])
+    col;
+  !return
 
-(* Given a [col] database column and a boolean expression cond, returns
-   a column of booleans where true entries match a true evaluation of
-   [cond] on the column entry (at the same index) *)
-let rec eval_col_condition col cond = failwith "TODO"
+(* Given a [col1] database column, relation [rel], and [col2] database
+   column, returns a column of booleans where true entries match a true
+   evaluation of [rel] between [col1] and [col2] (at the same index) *)
+let rec eval_col_condition col1 rel col2 =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      if rel (Array.get col1 i) (Array.get col2 i) then
+        return := Array.append !return [| true |]
+      else return := Array.append !return [| false |])
+    col1;
+  !return
+
+(* Takes an integer [i] and converts it to a column of same length as
+   [col] *)
+let col_of_int col i =
+  let length = Array.length col in
+  Array.make length i
+
+(* Less than relation for columns *)
+let ( <: ) col1 col2 = eval_col_condition col1 ( < ) col2
+
+(* Greater than relation for columns *)
+let ( >: ) col1 col2 = eval_col_condition col1 ( > ) col2
+
+(* Less than or equal to relation for columns *)
+let ( <=: ) col1 col2 = eval_col_condition col1 ( <= ) col2
+
+(* Greater than or equal to relation for columns *)
+let ( >=: ) col1 col2 = eval_col_condition col1 ( >= ) col2
+
+(* Equal relation for columns *)
+let ( =: ) col1 col2 = eval_col_condition col1 ( = ) col2
+
+(* Not equal relation for columns *)
+let ( !=: ) col1 col2 = eval_col_condition col1 ( <> ) col2
+
+(* Takes a list of columns (including all columnn data) and transforms
+   into a type [t] *)
+let t_of_columns str_arr_lst =
+  let table = Hashtbl.create 15 in
+  List.iteri (fun i a -> Hashtbl.replace table i a) str_arr_lst;
+  table
