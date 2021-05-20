@@ -10,8 +10,6 @@ let readcsv_empty_test name t e : test =
 
 let airtravel_data = from_csv "airtravel.csv"
 
-(*let airtravel_export = export_csv airtravel_data "airtravel_test"*)
-
 let airtravel_string =
   "\n\
    Month, JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC\n\
@@ -43,17 +41,50 @@ let numbers_string = "\n1, 8\n2, 9\n3, 0\n4, 1\n5, 2\n6, 3\n7, 4"
 
 let numbers_test_string = "\n1, 2, 3, 4, 5, 6, 7\n8, 9, 0, 1, 2, 3, 4"
 
+let testing_data = from_csv "testing.txt"
+
+let testing_string =
+  "\n\
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16\n\
+   my, nice, cool, Kennedy, jack, house, kitchen, league, pennies, \
+   cowboy, Michael, Ocaml, Hat, Neeko, Samira, Daisuki\n\
+   6000, 4000, 9000, 2000, 1000, 0000, 8000, 5000, 3000, 2800, 3090, \
+   0010, 2900, 8090, 7409, 2222\n\
+   wowzers, ok, Jacob, Donlon, rain, hail, omnivamp, legend, stones, \
+   cs, Clarkson, Sad, Bat, coward, Brolit, seven"
+
+let testing_test_string =
+  "\n\
+   1, my, 6000, wowzers\n\
+   2, nice, 4000, ok\n\
+   3, cool, 9000, Jacob\n\
+   4, Kennedy, 2000, Donlon\n\
+   5, jack, 1000, rain\n\
+   6, house, 0000, hail\n\
+   7, kitchen, 8000, omnivamp\n\
+   8, league, 5000, legend\n\
+   9, pennies, 3000, stones\n\
+   10, cowboy, 2800, cs\n\
+   11, Michael, 3090, Clarkson\n\
+   12, Ocaml, 0010, Sad\n\
+   13, Hat, 2900, Bat\n\
+   14, Neeko, 8090, coward\n\
+   15, Samira, 7409, Brolit\n\
+   16, Daisuki, 2222, seven"
+
 let exports =
   [
     export_csv airtravel_data "airtravel_test";
     export_csv numbers_data "numbers_test";
     export_csv empty "empty_test";
+    export_csv testing_data "testing_test";
   ]
 
 let reading_tests =
   [
     readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
     readcsv_test "read numbers.txt" numbers_data numbers_string;
+    readcsv_test "read testing.txt" testing_data testing_string;
     readcsv_test "read empty" empty "";
     readcsv_test "read airtravel export"
       (from_csv "airtravel_test")
@@ -61,6 +92,9 @@ let reading_tests =
     readcsv_test "read numbers export"
       (from_csv "numbers_test")
       numbers_test_string;
+    readcsv_test "read testing export"
+      (from_csv "testing_test")
+      testing_test_string;
     readcsv_empty_test "read empty export"
       (fun () -> from_csv "empty_test")
       End_of_file;
@@ -75,7 +109,8 @@ let _ =
   run_test_tt_main suite;
   Sys.remove "airtravel_test";
   Sys.remove "numbers_test";
-  Sys.remove "empty_test"
+  Sys.remove "empty_test";
+  Sys.remove "testing_test"
 
 (* let size_test name d e : test = name >:: fun _ -> assert_equal e
    (size d)
