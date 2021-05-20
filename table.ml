@@ -3,7 +3,7 @@ open Readcsv
 (* Representative type of a database table *)
 type t = { mutable lines : (int, string array) Hashtbl.t }
 
-type column = string array
+type c = string array
 
 (* uses Readcsv.from_csv to read in a database table from a CSV file *)
 let from_csv file = { lines = readcsv file }
@@ -135,9 +135,12 @@ let ( !=: ) col1 col2 = eval_col_condition col1 ( <> ) col2
 (* Takes a list of columns (including all columnn data) and transforms
    into a type [t] *)
 let t_of_columns str_arr_lst =
-  let table = Hashtbl.create 15 in
-  List.iteri (fun i a -> Hashtbl.replace table i a) str_arr_lst;
-  table
+  {
+    lines =
+      (let table = Hashtbl.create 15 in
+       List.iteri (fun i a -> Hashtbl.replace table i a) str_arr_lst;
+       table);
+  }
 
 (* Given a [col1] database column, binary operation [bop], and [col2]
    database column, returns a column of values of [bop col1 col2] (at
@@ -149,9 +152,10 @@ let rec eval_bop_int col1 bop col2 =
       return :=
         Array.append !return
           [|
-            bop
-              (int_of_string (Array.get col1 i))
-              (int_of_string (Array.get col2 i));
+            string_of_int
+              (bop
+                 (int_of_string (Array.get col1 i))
+                 (int_of_string (Array.get col2 i)));
           |])
     col1;
   !return
