@@ -3,6 +3,8 @@ open Readcsv
 (* Representative type of a database table *)
 type t = { mutable lines : (int, string array) Hashtbl.t }
 
+type column = string array
+
 (* uses Readcsv.from_csv to read in a database table from a CSV file *)
 let from_csv file = { lines = readcsv file }
 
@@ -136,3 +138,87 @@ let t_of_columns str_arr_lst =
   let table = Hashtbl.create 15 in
   List.iteri (fun i a -> Hashtbl.replace table i a) str_arr_lst;
   table
+
+(* Given a [col1] database column, binary operation [bop], and [col2]
+   database column, returns a column of values of [bop col1 col2] (at
+   the same index) *)
+let rec eval_bop_int col1 bop col2 =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      return :=
+        Array.append !return
+          [|
+            bop
+              (int_of_string (Array.get col1 i))
+              (int_of_string (Array.get col2 i));
+          |])
+    col1;
+  !return
+
+(* Add operator for columns *)
+let ( +: ) col1 col2 = eval_bop_int col1 ( + ) col2
+
+(* Subtract operator for columns *)
+let ( -: ) col1 col2 = eval_bop_int col1 ( - ) col2
+
+(* Multiply operator for columns *)
+let ( *: ) col1 col2 = eval_bop_int col1 ( * ) col2
+
+(* Divide operator for columns *)
+let ( /: ) col1 col2 = eval_bop_int col1 ( / ) col2
+
+(* Mod operator for columns *)
+let ( %: ) col1 col2 = eval_bop_int col1 ( mod ) col2
+
+(* Binary operation evaluation for floats *)
+let rec eval_bop_float col1 bop col2 =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      return :=
+        Array.append !return
+          [|
+            string_of_float
+              (bop
+                 (float_of_string (Array.get col1 i))
+                 (float_of_string (Array.get col2 i)));
+          |])
+    col1;
+  !return
+
+(* Add (float) operator for columns *)
+let ( +.: ) col1 col2 = eval_bop_float col1 ( +. ) col2
+
+(* Subtract (float) operator for columns *)
+let ( -.: ) col1 col2 = eval_bop_float col1 ( -. ) col2
+
+(* Multiply (float) operator for columns *)
+let ( *.: ) col1 col2 = eval_bop_float col1 ( *. ) col2
+
+(* Divide (float) operator for columns *)
+let ( /.: ) col1 col2 = eval_bop_float col1 ( /. ) col2
+
+(* apply fx to col1 *)
+let rec function_of_float col1 fx =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      return :=
+        Array.append !return
+          [|
+            string_of_float (fx (float_of_string (Array.get col1 i)));
+          |])
+    col1;
+  !return
+
+(* apply fx to col1 *)
+let rec function_of_int col1 fx =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      return :=
+        Array.append !return
+          [| string_of_int (fx (int_of_string (Array.get col1 i))) |])
+    col1;
+  !return
