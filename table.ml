@@ -79,6 +79,8 @@ let rec multi_search tbl_lst col_lst acc =
         multi_search tbl_lst t (mult_table_col_search tbl_lst h :: acc)
       with Column_not_found -> raise Column_not_found)
 
+let select tbl_lst col_lst = multi_search tbl_lst col_lst []
+
 (* Given a [bool_lst] of booleans and a [col] database column, returns a
    column with entries corresponding to the true entries in [bool_lst].
    REQUIRES length bool_lst = length col *)
@@ -108,7 +110,7 @@ let rec eval_col_condition col1 rel col2 =
    [col] *)
 let col_of_int col i =
   let length = Array.length col in
-  Array.make length i
+  Array.make length (string_of_int i)
 
 (* Less than relation for columns *)
 let ( <: ) col1 col2 = eval_col_condition col1 ( < ) col2
