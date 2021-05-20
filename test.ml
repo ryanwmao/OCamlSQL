@@ -61,7 +61,6 @@ let reading_tests =
     readcsv_test "read numbers export"
       (from_csv "numbers_test")
       numbers_test_string;
-    (*readcsv_test "read empty export" (from_csv "empty_test") "";*)
     readcsv_empty_test "read empty export"
       (fun () -> from_csv "empty_test")
       End_of_file;
