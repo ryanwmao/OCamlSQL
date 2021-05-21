@@ -80,6 +80,43 @@ let exports =
     export_csv testing_data "testing_test";
   ]
 
+let col_of_int_test name c i e : test =
+  name >:: fun _ -> assert_equal e (col_of_int c i)
+
+let airtravel_int_col = convert_to_c (Array.make 13 (string_of_int 2))
+
+let airtravel_cols =
+  select
+    [ from_csv "airtravel.csv" ]
+    [ "Month"; "1958"; "1959"; "1960" ]
+
+let testing_int_col = convert_to_c (Array.make 16 (string_of_int 2))
+
+let testing_cols =
+  select [ from_csv "testing.txt" ] [ "1"; "my"; "6000"; "wowzers" ]
+
+let select_test name tbls cols e : test =
+  name >:: fun _ -> assert_equal e (select tbls cols)
+
+let airtravel_1958 =
+  convert_to_c
+    (Array.of_list
+       [
+         "1958";
+         "340";
+         "318";
+         "362";
+         "348";
+         "363";
+         "435";
+         "491";
+         "505";
+         "404";
+         "359";
+         "310";
+         "337";
+       ])
+
 let reading_tests =
   [
     readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
@@ -100,10 +137,22 @@ let reading_tests =
       End_of_file;
   ]
 
+let select_tests =
+  [
+    col_of_int_test "airtravel int columns 2"
+      (List.hd airtravel_cols)
+      2 airtravel_int_col;
+    col_of_int_test "testing.txt int columns 2" (List.hd testing_cols) 2
+      testing_int_col;
+    select_test "select 1958 from airtravel"
+      [ from_csv "airtravel.csv" ]
+      [ "1958" ] [ airtravel_1958 ];
+  ]
 (*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
   "numbers_test"; Sys.remove "empty_test"; ]*)
 
-let suite = "search test suite" >::: List.flatten [ reading_tests ]
+let suite =
+  "search test suite" >::: List.flatten [ reading_tests; select_tests ]
 
 let _ =
   run_test_tt_main suite;

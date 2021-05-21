@@ -3,8 +3,10 @@
 (** Abstract type of values representing the database data *)
 type t
 
-(* Abstrac type of values representing table columns *)
+(* Abstract type of values representing table columns *)
 type c
+
+val convert_to_c : string array -> c
 
 (** [from_csv s] is the CSV data at the file in path [s]. Requires: [s]
     is a valid path name to a CSV file *)
@@ -87,3 +89,8 @@ val function_of_float : c -> (float -> float) -> c
 
 (* Applies an int function to an int column*)
 val function_of_int : c -> (int -> int) -> c
+
+(* Applies the order_by sortings to the given table [tbl] given the
+   specified column name [col_name] and whether or not the order is
+   ascending or descending [asc] *)
+val order_by : bool -> t -> string -> t

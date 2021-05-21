@@ -18,6 +18,8 @@ exception Column_not_found
 
 exception Length_mismatch
 
+let convert_to_c (arr : string array) : c = arr
+
 (* Print a database table to a local file [name] *)
 let export_csv t name =
   let oc =
@@ -305,6 +307,6 @@ let rec reorder_tbl acc tbl_list pos_lst =
 (* Applies the order_by sortings to the given table [tbl] given the
    specified column name [col_name] and whether or not the order is
    ascending or descending [asc] *)
-let order asc tbl col_name =
+let order_by asc tbl col_name =
   let pos_lst = position_list tbl (order_by_column asc tbl col_name) in
   t_of_columns (reorder_tbl [] (create_tbl_list 1 [] tbl) pos_lst)
