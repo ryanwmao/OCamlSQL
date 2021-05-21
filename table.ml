@@ -138,7 +138,10 @@ let t_of_columns str_arr_lst =
   {
     lines =
       (let table = Hashtbl.create 15 in
-       List.iteri (fun i a -> Hashtbl.replace table i a) str_arr_lst;
+       List.iteri
+         (fun i a -> Hashtbl.replace table (i + 1) a)
+         str_arr_lst;
+       (*change back to i*)
        table);
   }
 
@@ -226,3 +229,82 @@ let rec function_of_int col1 fx =
           [| string_of_int (fx (int_of_string (Array.get col1 i))) |])
     col1;
   !return
+
+(* Comparator used by order_by statements depending on if [asc] is
+   ascending (true) or descending (false)*)
+let compare asc s1 s2 =
+  if asc then if s1 = s2 then 0 else if s1 > s2 then 1 else -1
+  else if s1 = s2 then 0
+  else if s1 > s2 then -1
+  else 1
+
+(* Applies the comparator to the specified [col_name] by the order_by
+   statement for the given table [tbl] and depending on if [asc] is
+   ascending (true) or descending (false) *)
+let order_by_column asc tbl col_name =
+  let col = search tbl col_name 1 in
+  let col1 = Array.sub col 1 (Array.length col - 1) in
+  Array.sort (compare asc) col1;
+  Array.append (Array.sub col 0 1) col1
+
+(* Creates an initial list of pairs consisting of the column position
+   and value of the specified column [col] in an order_by statement *)
+let rec create_pos_list i acc col =
+  match col with
+  | [] -> List.rev acc
+  | h :: t -> create_pos_list (i + 1) ((h, i) :: acc) t
+
+(* Reorders the initial list of pairs between initial positions and
+   values [pos] in the array [arr] based on how order_by affects the
+   order and returns the changed list of positions *)
+let rec reorder_pos_list acc pos arr =
+  match arr with
+  | [] -> (
+      match List.split acc with [], [] -> failwith "" | a, b -> a)
+  | h :: t -> reorder_pos_list ((List.assoc h pos, h) :: acc) pos t
+
+(* Creates a list of positions representing where values in columns are
+   moved to after order_by is applied to the specified column [arr] in
+   the table [tbl]*)
+let position_list tbl arr =
+  let col = search tbl (Array.get arr 0) 1 in
+  let pos_lst = create_pos_list 0 [] (Array.to_list col) in
+  reorder_pos_list [] pos_lst (Array.to_list arr)
+
+(* Creates a list of arrays from the given table [tbl] *)
+let rec create_tbl_list i acc tbl =
+  if i = Hashtbl.length tbl.lines then acc
+  else create_tbl_list (i + 1) (Hashtbl.find tbl.lines i :: acc) tbl
+
+(* Returns an array of the values in [arr] after being modified using
+   the position map specified by [pos_lst] *)
+let rec change_order acc arr pos_lst =
+  match pos_lst with
+  | [] -> Array.of_list acc
+  | h :: t -> change_order (List.assoc h arr :: acc) arr t
+
+(* Swaps the values in the list of pairs [lst] *)
+let rec swap_list lst acc =
+  match lst with
+  | [] -> acc
+  | (a, b) :: t -> swap_list t ((b, a) :: acc)
+
+(* Reorders all of the arrays in [tbl_list] according to the list of
+   position mappings [pos_lst and returns a list of the modified arrays] *)
+let rec reorder_tbl acc tbl_list pos_lst =
+  match tbl_list with
+  | [] -> acc
+  | h :: t ->
+      reorder_tbl
+        (change_order []
+           (swap_list (create_pos_list 0 [] (Array.to_list h)) [])
+           pos_lst
+         :: acc)
+        t pos_lst
+
+(* Applies the order_by sortings to the given table [tbl] given the
+   specified column name [col_name] and whether or not the order is
+   ascending or descending [asc] *)
+let order asc tbl col_name =
+  let pos_lst = position_list tbl (order_by_column asc tbl col_name) in
+  t_of_columns (reorder_tbl [] (create_tbl_list 1 [] tbl) pos_lst)
