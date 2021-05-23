@@ -117,6 +117,74 @@ let airtravel_1958 =
          "337";
        ])
 
+let column_relation_test name c e : test =
+  name >:: fun _ -> assert_equal e c
+
+let airtravel_false_column =
+  Array.of_list
+    [
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+    ]
+
+let airtravel_true_column =
+  Array.of_list
+    [
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+    ]
+
+let month_less_1958 =
+  List.hd airtravel_cols <: List.nth airtravel_cols 2
+
+let airtravel_1958_less_1959 =
+  List.nth airtravel_cols 2 <: List.nth airtravel_cols 3
+
+let month_greater_1958 =
+  List.hd airtravel_cols >: List.nth airtravel_cols 2
+
+let airtravel_1958_greater_1959 =
+  List.nth airtravel_cols 2 >: List.nth airtravel_cols 3
+
+let month_less_equal_1958 =
+  List.hd airtravel_cols <: List.nth airtravel_cols 2
+
+let airtravel_1958_less_equal_1959 =
+  List.nth airtravel_cols 2 <=: List.nth airtravel_cols 3
+
+let month_greater_equal_1958 =
+  List.hd airtravel_cols >=: List.nth airtravel_cols 2
+
+let airtravel_1958_greater_equal_1959 =
+  List.nth airtravel_cols 2 >=: List.nth airtravel_cols 3
+
+let month_equal = List.hd airtravel_cols =: List.hd airtravel_cols
+
+let airtravel_1958_equal =
+  List.nth airtravel_cols 2 =: List.nth airtravel_cols 2
+
 let reading_tests =
   [
     readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
@@ -137,7 +205,7 @@ let reading_tests =
       End_of_file;
   ]
 
-let select_tests =
+let select_and_column_tests =
   [
     col_of_int_test "airtravel int columns 2"
       (List.hd airtravel_cols)
@@ -147,12 +215,32 @@ let select_tests =
     select_test "select 1958 from airtravel"
       [ from_csv "airtravel.csv" ]
       [ "1958" ] [ airtravel_1958 ];
+    column_relation_test "Month <: 1958 = false" month_less_1958
+      airtravel_false_column;
+    column_relation_test "1958 <: 1959 = true" airtravel_1958_less_1959
+      airtravel_true_column;
+    column_relation_test "Month >: 1958 = true" month_greater_1958
+      airtravel_true_column;
+    column_relation_test "1958 >: 1959 = false"
+      airtravel_1958_greater_1959 airtravel_false_column;
+    column_relation_test "Month <=: 1958 = false" month_less_equal_1958
+      airtravel_false_column;
+    column_relation_test "1958 <=: 1959 = true"
+      airtravel_1958_less_equal_1959 airtravel_true_column;
+    column_relation_test "Month >=: 1958 = true"
+      month_greater_equal_1958 airtravel_true_column;
+    column_relation_test "1958 >=: 1959 = false"
+      airtravel_1958_greater_equal_1959 airtravel_false_column;
+    column_relation_test "Month =: Month = true" month_equal
+      airtravel_true_column;
+    column_relation_test "1958 =: 1958 = true" airtravel_1958_equal
+      airtravel_true_column;
   ]
 (*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
   "numbers_test"; Sys.remove "empty_test"; ]*)
 
 let suite =
-  "search test suite" >::: List.flatten [ reading_tests; select_tests ]
+  "search test suite" >::: List.flatten [ reading_tests; select_and_column_tests ]
 
 let _ =
   run_test_tt_main suite;
