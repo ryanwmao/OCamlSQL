@@ -225,23 +225,9 @@ let wowzers_less_my = List.nth testing_cols 0 <: List.nth testing_cols 2
 let wowzers_less_my_bool =
   Array.of_list
     [
-      false;
-      false;
-      true;
-      true;
-      false;
-      true;
-      false;
-      false;
-      false;
-      false;
-      true;
-      false;
-      true;
-      false;
-      true;
-      false;
-    ]
+      false; false; true; true; false; true; false; false; false; false; true;
+      false; true; false; true; false;
+    ] [@ocamlformat "disable"]
 
 let wowzers_greater_my =
   List.nth testing_cols 0 >: List.nth testing_cols 2
@@ -249,23 +235,9 @@ let wowzers_greater_my =
 let wowzers_greater_my_bool =
   Array.of_list
     [
-      true;
-      true;
-      false;
-      false;
-      true;
-      false;
-      true;
-      true;
-      true;
-      true;
-      false;
-      true;
-      false;
-      true;
-      false;
-      true;
-    ]
+      true; true; false; false; true; false; true; true; true; true; false;
+      true; false; true; false; true;
+    ] [@ocamlformat "disable"]
 
 let wowzers_less_equal_my =
   List.nth testing_cols 0 <=: List.nth testing_cols 2
@@ -273,23 +245,9 @@ let wowzers_less_equal_my =
 let wowzers_less_equal_my_bool =
   Array.of_list
     [
-      false;
-      false;
-      true;
-      true;
-      false;
-      true;
-      false;
-      false;
-      false;
-      false;
-      true;
-      false;
-      true;
-      false;
-      true;
-      false;
-    ]
+      false; false; true; true; false; true; false; false; false; false; true;
+      false; true; false; true; false;
+    ] [@ocamlformat "disable"]
 
 let wowzers_greater_equal_my =
   List.nth testing_cols 0 >=: List.nth testing_cols 2
@@ -297,23 +255,9 @@ let wowzers_greater_equal_my =
 let wowzers_greater_equal_my_bool =
   Array.of_list
     [
-      true;
-      true;
-      false;
-      false;
-      true;
-      false;
-      true;
-      true;
-      true;
-      true;
-      false;
-      true;
-      false;
-      true;
-      false;
-      true;
-    ]
+      true; true; false; false; true; false; true; true; true; true; false;
+      true; false; true; false; true;
+    ] [@ocamlformat "disable"]
 
 let wowzers_equal_my =
   List.nth testing_cols 0 =: List.nth testing_cols 2
@@ -324,23 +268,9 @@ let wowzers_equal_wowzers =
 let wowzers_equal_my_bool =
   Array.of_list
     [
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-    ]
+      false; false; false; false; false; false; false; false; false; false;
+      false; false; false; false; false; false;
+    ] [@ocamlformat "disable"]
 
 let wowzers_not_equal_my =
   !=:(List.nth testing_cols 0) (List.nth testing_cols 2)
@@ -351,23 +281,9 @@ let wowzers_not_equal_wowzers =
 let wowzers_not_equal_my_bool =
   Array.of_list
     [
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-    ]
+      true; true; true; true; true; true; true; true; true; true; true; true;
+      true; true; true; true;
+    ] [@ocamlformat "disable"]
 
 let select_and_column_tests =
   [
@@ -456,7 +372,11 @@ let where_and_column_operations_tests =
 let suite =
   "search test suite"
   >::: List.flatten
-         [ reading_tests; select_and_column_tests; where_and_column_operations_tests ]
+         [
+           reading_tests;
+           select_and_column_tests;
+           where_and_column_operations_tests;
+         ]
 
 let _ =
   run_test_tt_main suite;
