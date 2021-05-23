@@ -267,11 +267,107 @@ let wowzers_greater_my_bool =
       true;
     ]
 
-(*let wowzers_less_equal_my = failwith ""
+let wowzers_less_equal_my =
+  List.nth testing_cols 0 <=: List.nth testing_cols 2
 
-  let wowzers_greater_equal_my = failwith ""
+let wowzers_less_equal_my_bool =
+  Array.of_list
+    [
+      false;
+      false;
+      true;
+      true;
+      false;
+      true;
+      false;
+      false;
+      false;
+      false;
+      true;
+      false;
+      true;
+      false;
+      true;
+      false;
+    ]
 
-  let wowzer_equal_wowzer = failwith ""*)
+let wowzers_greater_equal_my =
+  List.nth testing_cols 0 >=: List.nth testing_cols 2
+
+let wowzers_greater_equal_my_bool =
+  Array.of_list
+    [
+      true;
+      true;
+      false;
+      false;
+      true;
+      false;
+      true;
+      true;
+      true;
+      true;
+      false;
+      true;
+      false;
+      true;
+      false;
+      true;
+    ]
+
+let wowzers_equal_my =
+  List.nth testing_cols 0 =: List.nth testing_cols 2
+
+let wowzers_equal_wowzers =
+  List.nth testing_cols 0 =: List.nth testing_cols 0
+
+let wowzers_equal_my_bool =
+  Array.of_list
+    [
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+      false;
+    ]
+
+let wowzers_not_equal_my =
+  !=:(List.nth testing_cols 0) (List.nth testing_cols 2)
+
+let wowzers_not_equal_wowzers =
+  !=:(List.nth testing_cols 0) (List.nth testing_cols 0)
+
+let wowzers_not_equal_my_bool =
+  Array.of_list
+    [
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+      true;
+    ]
 
 let select_and_column_tests =
   [
@@ -315,12 +411,26 @@ let select_and_column_tests =
       airtravel_1958_not_equal_1958 airtravel_false_column;
     column_relation_test "wowzers <: my" wowzers_less_my
       wowzers_less_my_bool;
+    column_relation_test "wowzers >: my" wowzers_greater_my
+      wowzers_greater_my_bool;
+    column_relation_test "wowzers <=: my" wowzers_less_equal_my
+      wowzers_less_equal_my_bool;
+    column_relation_test "wowzers >=: my" wowzers_greater_equal_my
+      wowzers_greater_equal_my_bool;
+    column_relation_test "wowzers =: my" wowzers_equal_my
+      wowzers_equal_my_bool;
+    column_relation_test "wowzers =: wowzers" wowzers_equal_wowzers
+      wowzers_not_equal_my_bool;
+    column_relation_test "!=: wowzers my" wowzers_not_equal_my
+      wowzers_not_equal_my_bool;
+    column_relation_test "!=: wowzers wowzers" wowzers_not_equal_wowzers
+      wowzers_equal_my_bool;
   ]
 
 let where_col_filter_test name arr c e : test =
   name >:: fun _ -> assert_equal e (where_col_filter arr c)
 
-let where_tests =
+let where_and_column_operations_tests =
   [
     where_col_filter_test "wcf false month" airtravel_false_column
       (List.nth airtravel_cols 3)
@@ -328,6 +438,17 @@ let where_tests =
     where_col_filter_test "wcf true month" airtravel_true_column
       (List.nth airtravel_cols 3)
       (List.nth airtravel_cols 3);
+    where_col_filter_test "wcf wowzers_less_my wowzers"
+      wowzers_less_my_bool
+      (List.nth testing_cols 0)
+      (convert_to_c
+         (Array.of_list
+            [ "Jacob"; "Donlon"; "hail"; "Clarkson"; "Bat"; "Brolit" ]));
+    where_col_filter_test "wcf wowzers_less_my my" wowzers_less_my_bool
+      (List.nth testing_cols 2)
+      (convert_to_c
+         (Array.of_list
+            [ "cool"; "Kennedy"; "house"; "Michael"; "Hat"; "Samira" ]));
   ]
 (*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
   "numbers_test"; Sys.remove "empty_test"; ]*)
@@ -335,7 +456,7 @@ let where_tests =
 let suite =
   "search test suite"
   >::: List.flatten
-         [ reading_tests; select_and_column_tests; where_tests ]
+         [ reading_tests; select_and_column_tests; where_and_column_operations_tests ]
 
 let _ =
   run_test_tt_main suite;
