@@ -80,6 +80,26 @@ let exports =
     export_csv testing_data "testing_test";
   ]
 
+let reading_tests =
+  [
+    readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
+    readcsv_test "read numbers.txt" numbers_data numbers_string;
+    readcsv_test "read testing.txt" testing_data testing_string;
+    readcsv_test "read empty" empty "";
+    readcsv_test "read airtravel export"
+      (from_csv "airtravel_test")
+      airtravel_test_string;
+    readcsv_test "read numbers export"
+      (from_csv "numbers_test")
+      numbers_test_string;
+    readcsv_test "read testing export"
+      (from_csv "testing_test")
+      testing_test_string;
+    readcsv_empty_test "read empty export"
+      (fun () -> from_csv "empty_test")
+      End_of_file;
+  ]
+
 let col_of_int_test name c i e : test =
   name >:: fun _ -> assert_equal e (col_of_int c i)
 
@@ -157,53 +177,101 @@ let airtravel_true_column =
     ]
 
 let month_less_1958 =
-  List.hd airtravel_cols <: List.nth airtravel_cols 2
+  List.nth airtravel_cols 3 <: List.nth airtravel_cols 2
 
 let airtravel_1958_less_1959 =
-  List.nth airtravel_cols 2 <: List.nth airtravel_cols 3
+  List.nth airtravel_cols 2 <: List.nth airtravel_cols 1
 
 let month_greater_1958 =
-  List.hd airtravel_cols >: List.nth airtravel_cols 2
+  List.nth airtravel_cols 3 >: List.nth airtravel_cols 2
 
 let airtravel_1958_greater_1959 =
-  List.nth airtravel_cols 2 >: List.nth airtravel_cols 3
+  List.nth airtravel_cols 2 >: List.nth airtravel_cols 1
 
 let month_less_equal_1958 =
-  List.hd airtravel_cols <: List.nth airtravel_cols 2
+  List.nth airtravel_cols 3 <: List.nth airtravel_cols 2
 
 let airtravel_1958_less_equal_1959 =
-  List.nth airtravel_cols 2 <=: List.nth airtravel_cols 3
+  List.nth airtravel_cols 2 <=: List.nth airtravel_cols 1
 
 let month_greater_equal_1958 =
-  List.hd airtravel_cols >=: List.nth airtravel_cols 2
+  List.nth airtravel_cols 3 >=: List.nth airtravel_cols 2
 
 let airtravel_1958_greater_equal_1959 =
-  List.nth airtravel_cols 2 >=: List.nth airtravel_cols 3
+  List.nth airtravel_cols 2 >=: List.nth airtravel_cols 1
 
-let month_equal = List.hd airtravel_cols =: List.hd airtravel_cols
+let month_equal = List.nth airtravel_cols 3 =: List.nth airtravel_cols 3
 
 let airtravel_1958_equal =
   List.nth airtravel_cols 2 =: List.nth airtravel_cols 2
 
-let reading_tests =
-  [
-    readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
-    readcsv_test "read numbers.txt" numbers_data numbers_string;
-    readcsv_test "read testing.txt" testing_data testing_string;
-    readcsv_test "read empty" empty "";
-    readcsv_test "read airtravel export"
-      (from_csv "airtravel_test")
-      airtravel_test_string;
-    readcsv_test "read numbers export"
-      (from_csv "numbers_test")
-      numbers_test_string;
-    readcsv_test "read testing export"
-      (from_csv "testing_test")
-      testing_test_string;
-    readcsv_empty_test "read empty export"
-      (fun () -> from_csv "empty_test")
-      End_of_file;
-  ]
+let airtravel_1958_equal_Month =
+  List.nth airtravel_cols 2 =: List.nth airtravel_cols 3
+
+let airtravel_1958_equal_1959 =
+  List.nth airtravel_cols 2 =: List.nth airtravel_cols 1
+
+let month_not_equal_1958 =
+  !=:(List.nth airtravel_cols 3) (List.nth airtravel_cols 2)
+
+let month_not_equal_month =
+  !=:(List.nth airtravel_cols 3) (List.nth airtravel_cols 3)
+
+let airtravel_1958_not_equal_1958 =
+  !=:(List.nth airtravel_cols 2) (List.nth airtravel_cols 2)
+
+let wowzers_less_my = List.nth testing_cols 0 <: List.nth testing_cols 2
+
+let wowzers_less_my_bool =
+  Array.of_list
+    [
+      false;
+      false;
+      true;
+      true;
+      false;
+      true;
+      false;
+      false;
+      false;
+      false;
+      true;
+      false;
+      true;
+      false;
+      true;
+      false;
+    ]
+
+let wowzers_greater_my =
+  List.nth testing_cols 0 >: List.nth testing_cols 2
+
+let wowzers_greater_my_bool =
+  Array.of_list
+    [
+      true;
+      true;
+      false;
+      false;
+      true;
+      false;
+      true;
+      true;
+      true;
+      true;
+      false;
+      true;
+      false;
+      true;
+      false;
+      true;
+    ]
+
+(*let wowzers_less_equal_my = failwith ""
+
+  let wowzers_greater_equal_my = failwith ""
+
+  let wowzer_equal_wowzer = failwith ""*)
 
 let select_and_column_tests =
   [
@@ -235,12 +303,39 @@ let select_and_column_tests =
       airtravel_true_column;
     column_relation_test "1958 =: 1958 = true" airtravel_1958_equal
       airtravel_true_column;
+    column_relation_test "1958 =: Month = false"
+      airtravel_1958_equal_Month airtravel_false_column;
+    column_relation_test "1958 =: 1959 = false"
+      airtravel_1958_equal_1959 airtravel_false_column;
+    column_relation_test "!=: month 1958 = true" month_not_equal_1958
+      airtravel_true_column;
+    column_relation_test "!=: month month = false" month_not_equal_month
+      airtravel_false_column;
+    column_relation_test "!=: 1958 1958 = false"
+      airtravel_1958_not_equal_1958 airtravel_false_column;
+    column_relation_test "wowzers <: my" wowzers_less_my
+      wowzers_less_my_bool;
+  ]
+
+let where_col_filter_test name arr c e : test =
+  name >:: fun _ -> assert_equal e (where_col_filter arr c)
+
+let where_tests =
+  [
+    where_col_filter_test "wcf false month" airtravel_false_column
+      (List.nth airtravel_cols 3)
+      (convert_to_c [||]);
+    where_col_filter_test "wcf true month" airtravel_true_column
+      (List.nth airtravel_cols 3)
+      (List.nth airtravel_cols 3);
   ]
 (*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
   "numbers_test"; Sys.remove "empty_test"; ]*)
 
 let suite =
-  "search test suite" >::: List.flatten [ reading_tests; select_and_column_tests ]
+  "search test suite"
+  >::: List.flatten
+         [ reading_tests; select_and_column_tests; where_tests ]
 
 let _ =
   run_test_tt_main suite;
