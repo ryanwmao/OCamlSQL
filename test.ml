@@ -346,6 +346,77 @@ let select_and_column_tests =
 let where_col_filter_test name arr c e : test =
   name >:: fun _ -> assert_equal e (where_col_filter arr c)
 
+let column_bop_test name c e : test = name >:: fun _ -> assert_equal e c
+
+let testing_1_plus_6000 =
+  List.nth testing_cols 1 +: List.nth testing_cols 3
+
+let testing_1_plus_6000_res =
+  convert_to_c 
+    (Array.of_list 
+      [ 
+        "6001"; "4002"; "9003"; "2004"; "1005"; "6"; "8007"; "5008"; "3009"; 
+        "2810"; "3101"; "22"; "2913"; "8104"; "7424"; "2238" 
+      ]) [@ocamlformat "disable"]
+
+let testing_6000_minus_1 =
+  List.nth testing_cols 1 -: List.nth testing_cols 3
+
+let testing_6000_minus_1_res =
+  convert_to_c
+    (Array.of_list 
+      [
+        "5999"; "3998"; "8997"; "1996"; "995"; "-6"; "7993"; "4992"; "2991"; 
+        "2790"; "3079"; "-2"; "2887"; "8076"; "7394"; "2206"
+      ]) [@ocamlformat "disable"]
+
+let testing_1_times_6000 =
+  List.nth testing_cols 1 *: List.nth testing_cols 3
+
+let testing_1_times_6000_res =
+  convert_to_c
+    (Array.of_list
+      [
+        "6000"; "8000"; "27000"; "8000"; "5000"; "0"; "56000"; "40000"; "27000";
+        "28000"; "33990"; "120"; "37700"; "113260"; "111135"; "35552"
+      ]) [@ocamlformat "disable"]
+
+let testing_6000_divide_1 =
+  List.nth testing_cols 1 /: List.nth testing_cols 3
+
+let testing_6000_divide_1_res =
+  convert_to_c
+    (Array.of_list
+      [
+        "6000"; "2000"; "3000"; "500"; "200"; "0"; "1142"; "625"; "333"; "280";
+        "280"; "0"; "223"; "577"; "493"; "138"
+      ]) [@ocamlformat "disable"]
+
+let testing_6000_mod_1 =
+  List.nth testing_cols 1 %: List.nth testing_cols 3
+
+let testing_6000_mod_1_res =
+  convert_to_c
+    (Array.of_list
+      [
+        "0"; "0"; "0"; "0"; "0"; "0"; "6"; "0"; "3"; "0"; "10"; "10"; "1"; "12";
+        "14"; "14"
+      ]) [@ocamlformat "disable"]
+
+let function_of_int_test name c fx e : test =
+  name >:: fun _ -> assert_equal e (function_of_int c fx)
+
+let square x = x * x
+
+let testing_6000_square =
+  convert_to_c
+    (Array.of_list
+      [
+        "36000000"; "16000000"; "81000000"; "4000000"; "1000000"; "0"; 
+        "64000000";"25000000"; "9000000"; "7840000"; "9548100"; "100"; 
+        "8410000"; "65448100"; "54893281"; "4937284"
+      ]) [@ocamlformat "disable"]
+
 let where_and_column_operations_tests =
   [
     where_col_filter_test "wcf false month" airtravel_false_column
@@ -365,6 +436,93 @@ let where_and_column_operations_tests =
       (convert_to_c
          (Array.of_list
             [ "cool"; "Kennedy"; "house"; "Michael"; "Hat"; "Samira" ]));
+    column_bop_test "1 +: 6000" testing_1_plus_6000
+      testing_1_plus_6000_res;
+    column_bop_test "6000 -: 1" testing_6000_minus_1
+      testing_6000_minus_1_res;
+    column_bop_test "1 *: 6000" testing_1_times_6000
+      testing_1_times_6000_res;
+    column_bop_test "6000 /: 1" testing_6000_divide_1
+      testing_6000_divide_1_res;
+    column_bop_test "6000  %: 1" testing_6000_mod_1
+      testing_6000_mod_1_res;
+    function_of_int_test "square 6000"
+      (List.nth testing_cols 1)
+      square testing_6000_square;
+  ]
+
+let order_by_test name asc tbl c e : test =
+  name >:: fun _ -> assert_equal e (export_string (order_by asc tbl c))
+
+let order_by_1958_asc =
+  "\n\
+   Month, NOV, FEB, DEC, JAN, APR, OCT, MAR, MAY, SEP, JUN, JUL, AUG\n\
+   1958, 310, 318, 337, 340, 348, 359, 362, 363, 404, 435, 491, 505\n\
+   1959, 362, 342, 405, 360, 396, 407, 406, 420, 463, 472, 548, 559\n\
+   1960, 390, 391, 432, 417, 461, 461, 419, 472, 508, 535, 622, 606"
+
+let order_by_1958_desc =
+  "\n\
+   Month, AUG, JUL, JUN, SEP, MAY, MAR, OCT, APR, JAN, DEC, FEB, NOV\n\
+   1958, 505, 491, 435, 404, 363, 362, 359, 348, 340, 337, 318, 310\n\
+   1959, 559, 548, 472, 463, 420, 406, 407, 396, 360, 405, 342, 362\n\
+   1960, 606, 622, 535, 508, 472, 419, 461, 461, 417, 432, 391, 390"
+
+let order_by_Month_asc =
+  "\n\
+   Month, APR, AUG, DEC, FEB, JAN, JUL, JUN, MAR, MAY, NOV, OCT, SEP\n\
+   1958, 348, 505, 337, 318, 340, 491, 435, 362, 363, 310, 359, 404\n\
+   1959, 396, 559, 405, 342, 360, 548, 472, 406, 420, 362, 407, 463\n\
+   1960, 461, 606, 432, 391, 417, 622, 535, 419, 472, 390, 461, 508"
+
+let order_by_Month_desc =
+  "\n\
+   Month, SEP, OCT, NOV, MAY, MAR, JUN, JUL, JAN, FEB, DEC, AUG, APR\n\
+   1958, 404, 359, 310, 363, 362, 435, 491, 340, 318, 337, 505, 348\n\
+   1959, 463, 407, 362, 420, 406, 472, 548, 360, 342, 405, 559, 396\n\
+   1960, 508, 461, 390, 472, 419, 535, 622, 417, 391, 432, 606, 461"
+
+let order_by_6000_asc =
+  "\n\
+   1, 6, 12, 5, 4, 16, 10, 13, 9, 11, 2, 8, 15, 7, 14, 3\n\
+   my, house, Ocaml, jack, Kennedy, Daisuki, cowboy, Hat, pennies, \
+   Michael, nice, league, Samira, kitchen, Neeko, cool\n\
+   6000, 0000, 0010, 1000, 2000, 2222, 2800, 2900, 3000, 3090, 4000, \
+   5000, 7409, 8000, 8090, 9000\n\
+   wowzers, hail, Sad, rain, Donlon, seven, cs, Bat, stones, Clarkson, \
+   ok, legend, Brolit, omnivamp, coward, Jacob"
+
+let order_by_6000_desc =
+  "\n\
+   1, 3, 14, 7, 15, 8, 2, 11, 9, 13, 10, 16, 4, 5, 12, 6\n\
+   my, cool, Neeko, kitchen, Samira, league, nice, Michael, pennies, \
+   Hat, cowboy, Daisuki, Kennedy, jack, Ocaml, house\n\
+   6000, 9000, 8090, 8000, 7409, 5000, 4000, 3090, 3000, 2900, 2800, \
+   2222, 2000, 1000, 0010, 0000\n\
+   wowzers, Jacob, coward, omnivamp, Brolit, legend, ok, Clarkson, \
+   stones, Bat, cs, seven, Donlon, rain, Sad, hail\n\
+  \  "
+
+let order_by_tests =
+  [
+    order_by_test "order by 1958 asc" true
+      (from_csv "airtravel.csv")
+      "1958" order_by_1958_asc;
+    order_by_test "order by 1958 desc" false
+      (from_csv "airtravel.csv")
+      "1958" order_by_1958_desc;
+    order_by_test "order by month asc" true
+      (from_csv "airtravel.csv")
+      "Month" order_by_Month_asc;
+    order_by_test "order by month desc" false
+      (from_csv "airtravel.csv")
+      "Month" order_by_Month_desc;
+    order_by_test "order by 6000 asc" true
+      (from_csv "testing.txt")
+      "6000" order_by_6000_asc;
+    order_by_test "order by 6000 desc" false
+      (from_csv "testing.txt")
+      "6000" order_by_6000_desc;
   ]
 (*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
   "numbers_test"; Sys.remove "empty_test"; ]*)

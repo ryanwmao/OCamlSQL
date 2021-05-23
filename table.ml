@@ -275,7 +275,7 @@ let position_list tbl arr =
 
 (* Creates a list of arrays from the given table [tbl] *)
 let rec create_tbl_list i acc tbl =
-  if i = Hashtbl.length tbl.lines then acc
+  if i = Hashtbl.length tbl.lines + 1 then acc
   else create_tbl_list (i + 1) (Hashtbl.find tbl.lines i :: acc) tbl
 
 (* Returns an array of the values in [arr] after being modified using
