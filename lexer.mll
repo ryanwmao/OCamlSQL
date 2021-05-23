@@ -5,7 +5,7 @@
 let white = [' ' '\t' '\n']+
 let digit = ['0'-'9']
 let int = ['-']? digit+
-let float = ['+' '-']? ((digit+['.']digit*) | (digit*['.']digit+))
+let float = ['-']? ((digit+['.']digit*) | (digit*['.']digit+))
 let column = ['a'-'z' 'A'-'Z' '0'-'9']+
 let any = ['a'-'z' 'A'-'Z' '0'-'9' ' ' '!' '"' '#' '$' '%' '&' ''' '(' ')' '*' '+' ',' '-' '.' '/' ':' ';' '<' '=' '>' '?' '@' '[' '\\' ']' '^' '_' '`' '{' '|' '}' '~']*
 let str = '\"' any '\"'
