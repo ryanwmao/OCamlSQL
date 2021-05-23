@@ -19,7 +19,11 @@ type tables =
   | RightJoin of tables * tables
   | InnerJoin of tables * tables
 
-type expr = 
+type expressions = 
+  | SingleExpr of expr
+  | MultipleExpr of expr * expressions
+
+and expr = 
   | Boolean of bool
   | Integer of int
   | Float of float
@@ -27,10 +31,7 @@ type expr =
   | Str of string (* NOTE: a String could be a column name, or a string *)
   | Binop of bop * expr * expr
   | Not of expr
-
-type expressions = 
-  | SingleExpr of expr
-  | MultipleExpr of expr * expressions
+  | Function of string * expressions
 
 type order_by = 
   | AS of expressions
