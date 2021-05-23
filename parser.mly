@@ -60,6 +60,7 @@ expr:
   | e1 = expr; DIV ; e2 = expr { Binop (Div, e1, e2)}
   | e1 = expr; SUB ; e2 = expr { Binop (Sub, e1, e2)}
   | e1 = expr; MOD ; e2 = expr { Binop (Mod, e1, e2)}
+  | fn_name = COLUMN; LPAREN; e = expressions; RPAREN { Function (fn_name, e) }
   | LPAREN; e = expr; RPAREN { e }
   ;
 
