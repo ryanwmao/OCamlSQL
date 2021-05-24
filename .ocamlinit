@@ -2,3 +2,8 @@
 #require "csv";;
 #require "ANSITerminal";;
 #load "str.cma";;
+#load "lexer.cmo";;
+#load "parser.cmo";;
+#load "main.cmo";;
+open Ast;;
+#use "command_parser.ml";;

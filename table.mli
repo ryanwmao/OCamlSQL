@@ -6,6 +6,9 @@ type t
 (** Abstract type of values representing table columns *)
 type c
 
+(** Abstract type of values representing the original table of columns *)
+type c_orig
+
 (** Converts column data into the abstract type representing table
     columns*)
 val convert_to_c : string array -> c
@@ -22,9 +25,9 @@ val export_string : t -> string
 
 (* Finds a column with name [name] in table [t], raising
    [Column_not_found] if the column does not exist within [t]. *)
-val column : t -> string -> string array
+val column : t -> string -> c
 
-(** Returns length of table [t] *)
+(** Returns length of table [t], including the header row *)
 val length_of_t : t -> int
 
 (** An empty database table *)
@@ -99,15 +102,23 @@ val ( *.: ) : c -> c -> c
 (** Division for float columns *)
 val ( /.: ) : c -> c -> c
 
+(** AND operator for columns *)
+val ( &&: ) : c -> c -> c
+
+(** OR operator for columns *)
+val ( ||: ) : c -> c -> c
+
+(** NOT function for columns *)
+val not_fn : c -> c
+
 (** Applies a float function (ex, sin(x)) to a float column*)
 val function_of_float : c -> (float -> float) -> c
 
 (** Applies an int function to an int column*)
 val function_of_int : c -> (int -> int) -> c
 
-(** Applies the order_by sortings to the given table given the
-    specified column name and whether or not the order is
-    ascending or descending *)
+(** Applies the order_by sortings to the given table given the specified
+    column name and whether or not the order is ascending or descending *)
 val order_by : bool -> t -> string -> t
 
 (* Performs groupings based on a column in a table, and returns the bins
@@ -127,6 +138,17 @@ val group_aggregate :
 (* Given a table, column name, and bin groupings, performs the grouping
    and returns a new column *)
 val group_no_aggregate : t -> string -> (string, int) Hashtbl.t -> c
+
+(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with
+   tbl2. col_orig1 describes which tables that the columns in tbl1 are
+   originally from. col_orig2 is similar. *)
+val inner_join : t -> c_orig -> t -> c_orig -> t * c_orig
+
+(* Converts a boolean array into a column *)
+val col_of_bool_array : bool array -> c
+
+(* Converts a column into a boolean array *)
+val bool_array_of_col : c -> bool array
 
 (* Count aggregate function *)
 val count : string -> 'a -> string

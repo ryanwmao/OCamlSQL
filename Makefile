@@ -1,4 +1,4 @@
-MODULES= command_parser readcsv main author table
+MODULES= command_parser readcsv main author table database eval
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
@@ -16,6 +16,10 @@ build:
 demo:
 	$(OCAMLBUILD) -tag 'debug' $(MAIN) && OCAMLRUNPARAM=b ./$(MAIN)
 
+parser:
+	ocamlbuild -use-ocamlfind command_parser.byte
+	utop
+	
 test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
 

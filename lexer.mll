@@ -27,6 +27,8 @@ rule read =
   | "<=" { LEQ }
   | "!=" { NEQ }
   | "NOT" { NOT }
+  | "AND" { AND }
+  | "OR"  { OR }
   | "ASC" { ASC }
   | "DESC" { DESC }
   | "INNER JOIN" { INNERJOIN }

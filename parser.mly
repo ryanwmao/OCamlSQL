@@ -15,6 +15,7 @@
 %token MOD
 %token EOF
 %token LPAREN
+%token AND OR
 %token RPAREN
 %token COMMA
 %token RIGHTJOIN LEFTJOIN INNERJOIN OUTERJOIN
@@ -48,6 +49,8 @@ expr:
   | i = BOOL { Boolean i }
   | i = COLUMN { Column i }
   | i = STRING { let s = String.sub i 1 ((String.length i) - 2) in Str s }
+  | e1 = expr; AND ; e2 = expr { Binop (AND, e1, e2)}
+  | e1 = expr; OR ; e2 = expr { Binop (OR, e1, e2)}
   | e1 = expr; EQ ; e2 = expr { Binop (EQ, e1, e2)}
   | e1 = expr; NEQ ; e2 = expr { Binop (NEQ, e1, e2)}
   | e1 = expr; GT ; e2 = expr { Binop (GT, e1, e2)}

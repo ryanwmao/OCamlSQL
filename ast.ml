@@ -1,5 +1,7 @@
 
 type bop = 
+  | AND
+  | OR
   | EQ
   | NEQ
   | GT

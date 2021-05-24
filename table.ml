@@ -5,6 +5,8 @@ type t = { mutable lines : (int, string array) Hashtbl.t }
 
 type c = string array
 
+type c_orig = (int, string) Hashtbl.t
+
 (* uses Readcsv.from_csv to read in a database table from a CSV file *)
 let from_csv file = { lines = readcsv file }
 
@@ -197,21 +199,6 @@ let rec eval_bop_int col1 bop col2 =
     col1;
   !return
 
-(* Add operator for columns *)
-let ( +: ) col1 col2 = eval_bop_int col1 ( + ) col2
-
-(* Subtract operator for columns *)
-let ( -: ) col1 col2 = eval_bop_int col1 ( - ) col2
-
-(* Multiply operator for columns *)
-let ( *: ) col1 col2 = eval_bop_int col1 ( * ) col2
-
-(* Divide operator for columns *)
-let ( /: ) col1 col2 = eval_bop_int col1 ( / ) col2
-
-(* Mod operator for columns *)
-let ( %: ) col1 col2 = eval_bop_int col1 ( mod ) col2
-
 (* Binary operation evaluation for floats *)
 let rec eval_bop_float col1 bop col2 =
   let return = ref [||] in
@@ -228,6 +215,22 @@ let rec eval_bop_float col1 bop col2 =
     col1;
   !return
 
+(* Binary operation evaluation for booleans *)
+let rec eval_bop_bool col1 bop col2 =
+  let return = ref [||] in
+  Array.iteri
+    (fun i a ->
+      return :=
+        Array.append !return
+          [|
+            string_of_bool
+              (bop
+                 (bool_of_string (Array.get col1 i))
+                 (bool_of_string (Array.get col2 i)));
+          |])
+    col1;
+  !return
+
 (* Add (float) operator for columns *)
 let ( +.: ) col1 col2 = eval_bop_float col1 ( +. ) col2
 
@@ -239,6 +242,46 @@ let ( *.: ) col1 col2 = eval_bop_float col1 ( *. ) col2
 
 (* Divide (float) operator for columns *)
 let ( /.: ) col1 col2 = eval_bop_float col1 ( /. ) col2
+
+(* Add operator for columns *)
+let ( +: ) col1 col2 = 
+  try eval_bop_int col1 ( + ) col2 
+  with Failure _ -> eval_bop_float col1 ( +. ) col2
+
+(* Subtract operator for columns *)
+let ( -: ) col1 col2 = 
+  try eval_bop_int col1 ( - ) col2 
+  with Failure _ -> eval_bop_float col1 ( -. ) col2
+
+(* Multiply operator for columns *)
+let ( *: ) col1 col2 = 
+  try eval_bop_int col1 ( * ) col2 
+  with Failure _ -> eval_bop_float col1 ( *. ) col2
+
+(* Divide operator for columns *)
+let ( /: ) col1 col2 = 
+  try eval_bop_int col1 ( / ) col2 
+  with Failure _ -> eval_bop_float col1 ( /. ) col2
+
+(* AND operator for columns *)
+let ( &&: ) col1 col2 = 
+  eval_bop_bool col1 ( && ) col2
+
+(* OR operator for columns *)
+let ( ||: ) col1 col2 = 
+  eval_bop_bool col1 ( || ) col2
+
+(* NOT function for columns *)
+let not_fn col1 = 
+  Array.map (fun x -> x |> bool_of_string |> not |> string_of_bool) col1
+
+(* Mod operator for columns *)
+let ( %: ) col1 col2 = 
+  try eval_bop_int col1 ( mod ) col2 
+  with Failure _ -> 
+    let f = (fun a b -> float_of_int ((int_of_float a) mod (int_of_float b))) 
+    in
+    eval_bop_float col1 f col2
 
 (* apply fx to col1 *)
 let rec function_of_float col1 fx =
@@ -381,6 +424,19 @@ let group_no_aggregate tbl col_name bins =
     (fun k v -> str_array := Array.append !str_array [| v |])
     new_col;
   !str_array
+
+let col_of_bool_array b_array = 
+  Array.map (fun x -> string_of_bool x) b_array
+
+let bool_array_of_col col = 
+  Array.map (fun x -> bool_of_string x) col
+
+
+(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with tbl2.
+    col_orig1 describes which tables that the columns in tbl1 are originally from.
+    col_orig2 is similar. *)
+let inner_join tbl1 c_orig1 tbl2 c_orig = 
+  failwith "unimplemented"
 
 (* count aggregate function *)
 let count p n =
