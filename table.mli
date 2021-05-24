@@ -105,9 +105,9 @@ val function_of_float : c -> (float -> float) -> c
 (** Applies an int function to an int column*)
 val function_of_int : c -> (int -> int) -> c
 
-(** Applies the order_by sortings to the given table [tbl] given the
-    specified column name [col_name] and whether or not the order is
-    ascending or descending [asc] *)
+(** Applies the order_by sortings to the given table given the
+    specified column name and whether or not the order is
+    ascending or descending *)
 val order_by : bool -> t -> string -> t
 
 (* Performs groupings based on a column in a table, and returns the bins
