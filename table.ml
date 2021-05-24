@@ -219,7 +219,7 @@ let rec eval_bop_float col1 bop col2 =
 let rec eval_bop_bool col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a ->
+    (fun i a -> if i = 0 then () else
       return :=
         Array.append !return
           [|
@@ -273,7 +273,7 @@ let ( ||: ) col1 col2 =
 
 (* NOT function for columns *)
 let not_fn col1 = 
-  Array.map (fun x -> x |> bool_of_string |> not |> string_of_bool) col1
+  Array.mapi (fun i x -> if i > 0 then x |> bool_of_string |> not |> string_of_bool else x) col1
 
 (* Mod operator for columns *)
 let ( %: ) col1 col2 = 
