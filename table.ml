@@ -187,7 +187,7 @@ let t_of_columns str_arr_lst =
 let rec eval_bop_int col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a ->
+    (fun i a -> if i = 0 then () else
       return :=
         Array.append !return
           [|
@@ -203,7 +203,7 @@ let rec eval_bop_int col1 bop col2 =
 let rec eval_bop_float col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a ->
+    (fun i a -> if i = 0 then () else
       return :=
         Array.append !return
           [|
