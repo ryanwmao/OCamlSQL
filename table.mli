@@ -20,8 +20,17 @@ val export_csv : t -> string -> unit
 (** Converts a database table to a CSV-formatted string *)
 val export_string : t -> string
 
+(* Finds a column with name [name] in table [t], raising
+   [Column_not_found] if the column does not exist within [t]. *)
+val column : t -> string -> string array
+
+(** Returns length of table [t] *)
+val length_of_t : t -> int
+
 (** An empty database table *)
 val empty : t
+
+exception Column_not_found
 
 (** Takes a column and creates a new column of the same length, with all
     values initialized to an integer *)
@@ -58,6 +67,10 @@ val ( !=: ) : c -> c -> bool array
     and applies it to a column, returning a column with only entries
     corresponding to "true" *)
 val where_col_filter : bool array -> c -> c
+
+val where_and : bool array -> bool array -> c -> c -> c list
+
+val where_or : bool array -> bool array -> c -> c -> c list
 
 (** Addition for integer columns *)
 val ( +: ) : c -> c -> c

@@ -11,7 +11,10 @@ let from_csv file = { lines = readcsv file }
 (* NOT SURE IF NEEDED *)
 let read_workspace name = { lines = readcsv (*"../workspace/"^*) name }
 
-(* An empty database table *)
+(** Returns length of table [t] *)
+let length_of_t t = Hashtbl.length t.lines
+
+(** An empty database table *)
 let empty = { lines = Hashtbl.create 0 }
 
 exception Column_not_found
@@ -115,6 +118,35 @@ let rec eval_col_condition col1 rel col2 =
 let col_of_int col i =
   let length = Array.length col in
   Array.make length (string_of_int i)
+
+(* Returns a boolean list that contains true in the indices where
+   [bool_lst1] and [bool_lst2] both contain true, contains false
+   otherwise *)
+let rec where_and_helper acc i bool_lst1 bool_lst2 =
+  match bool_lst1 with
+  | [] -> Array.of_list (List.rev acc)
+  | h :: t ->
+      if h && List.nth bool_lst2 i then
+        where_and_helper (true :: acc) (i + 1) t (List.tl bool_lst2)
+      else where_and_helper (false :: acc) (i + 1) t (List.tl bool_lst2)
+
+(* Given database columns [col1] and [col2], and list of booleans
+   [bool_lst1] and [bool_lst2], returns a list of columns with entries
+   corresponding to the overlapping true entries in the two boolean
+   lists *)
+let where_and bool_lst1 bool_lst2 col1 col2 =
+  let bool_lst =
+    where_and_helper [] 0
+      (Array.to_list bool_lst1)
+      (Array.to_list bool_lst2)
+  in
+  [ where_col_filter bool_lst col1; where_col_filter bool_lst col2 ]
+
+(* Given database columns [col1] and [col2], and list of booleans
+   [bool_lst1] and [bool_lst2], returns a list of columns with entries
+   corresponding to the true entries in the boolean lists *)
+let where_or bool_lst1 bool_lst2 col1 col2 =
+  [ where_col_filter bool_lst1 col1; where_col_filter bool_lst2 col2 ]
 
 (* Less than relation for columns *)
 let ( <: ) col1 col2 = eval_col_condition col1 ( < ) col2
