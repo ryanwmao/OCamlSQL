@@ -1,4 +1,4 @@
-MODULES= command_parser readcsv main author table
+MODULES= command_parser readcsv main author table eval database
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
