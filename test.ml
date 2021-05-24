@@ -279,6 +279,9 @@ let column_bop_test name c e : test = name >:: fun _ -> assert_equal e c
 let testing_1_plus_6000 =
   List.nth testing_cols 1 +: List.nth testing_cols 3
 
+let testing_1_plusf_6000 =
+  List.nth testing_cols 1 +.: List.nth testing_cols 3
+
 let testing_1_plus_6000_res =
   convert_to_c 
     (Array.of_list 
@@ -287,8 +290,19 @@ let testing_1_plus_6000_res =
         "2810"; "3101"; "22"; "2913"; "8104"; "7424"; "2238" 
       ]) [@ocamlformat "disable"]
 
+let testing_1_plusf_6000_res =
+  convert_to_c 
+    (Array.of_list 
+    [ 
+      "6001."; "4002."; "9003."; "2004."; "1005."; "6."; "8007."; "5008."; 
+      "3009."; "2810."; "3101."; "22."; "2913."; "8104."; "7424."; "2238."
+     ]) [@ocamlformat "disable"]
+
 let testing_6000_minus_1 =
   List.nth testing_cols 1 -: List.nth testing_cols 3
+
+let testing_6000_minusf_1 =
+  List.nth testing_cols 1 -.: List.nth testing_cols 3
 
 let testing_6000_minus_1_res =
   convert_to_c
@@ -298,8 +312,19 @@ let testing_6000_minus_1_res =
         "2790"; "3079"; "-2"; "2887"; "8076"; "7394"; "2206"
       ]) [@ocamlformat "disable"]
 
+let testing_6000_minusf_1_res =
+  convert_to_c
+    (Array.of_list 
+      [
+        "5999."; "3998."; "8997."; "1996."; "995."; "-6."; "7993."; "4992."; "2991."; 
+        "2790."; "3079."; "-2."; "2887."; "8076."; "7394."; "2206."
+      ]) [@ocamlformat "disable"]
+
 let testing_1_times_6000 =
   List.nth testing_cols 1 *: List.nth testing_cols 3
+
+let testing_1_timesf_6000 =
+  List.nth testing_cols 1 *.: List.nth testing_cols 3
 
 let testing_1_times_6000_res =
   convert_to_c
@@ -309,8 +334,20 @@ let testing_1_times_6000_res =
         "28000"; "33990"; "120"; "37700"; "113260"; "111135"; "35552"
       ]) [@ocamlformat "disable"]
 
+let testing_1_timesf_6000_res =
+  convert_to_c
+  (Array.of_list
+    [
+      "6000."; "8000."; "27000."; "8000."; "5000."; "0."; "56000."; "40000."; 
+      "27000."; "28000."; "33990."; "120."; "37700."; "113260."; "111135."; 
+      "35552."
+    ]) [@ocamlformat "disable"]
+
 let testing_6000_divide_1 =
   List.nth testing_cols 1 /: List.nth testing_cols 3
+
+let testing_6000_dividef_1 =
+  List.nth testing_cols 1 /.: List.nth testing_cols 3
 
 let testing_6000_divide_1_res =
   convert_to_c
@@ -319,6 +356,15 @@ let testing_6000_divide_1_res =
         "6000"; "2000"; "3000"; "500"; "200"; "0"; "1142"; "625"; "333"; "280";
         "280"; "0"; "223"; "577"; "493"; "138"
       ]) [@ocamlformat "disable"]
+
+let testing_6000_dividef_1_res =
+  convert_to_c
+  (Array.of_list
+    [
+      "6000."; "2000."; "3000."; "500."; "200."; "0."; "1142.85714286"; "625.";
+      "333.333333333"; "280."; "280.909090909"; "0.833333333333";
+      "223.076923077"; "577.857142857"; "493.933333333"; "138.875"
+    ]) [@ocamlformat "disable"]
 
 let testing_6000_mod_1 =
   List.nth testing_cols 1 %: List.nth testing_cols 3
@@ -334,7 +380,12 @@ let testing_6000_mod_1_res =
 let function_of_int_test name c fx e : test =
   name >:: fun _ -> assert_equal e (function_of_int c fx)
 
+let function_of_float_test name c fx e : test =
+  name >:: fun _ -> assert_equal e (function_of_float c fx)
+
 let square x = x * x
+
+let squaref x = x *. x
 
 let testing_6000_square =
   convert_to_c
@@ -343,6 +394,15 @@ let testing_6000_square =
         "36000000"; "16000000"; "81000000"; "4000000"; "1000000"; "0"; 
         "64000000";"25000000"; "9000000"; "7840000"; "9548100"; "100"; 
         "8410000"; "65448100"; "54893281"; "4937284"
+      ]) [@ocamlformat "disable"]
+
+let testing_6000_squaref =
+  convert_to_c
+    (Array.of_list
+      [
+        "36000000."; "16000000."; "81000000."; "4000000."; "1000000."; "0.";
+        "64000000."; "25000000."; "9000000."; "7840000."; "9548100."; "100.";
+        "8410000."; "65448100."; "54893281."; "4937284."
       ]) [@ocamlformat "disable"]
 
 let where_and_column_operations_tests =
@@ -366,17 +426,28 @@ let where_and_column_operations_tests =
             [ "cool"; "Kennedy"; "house"; "Michael"; "Hat"; "Samira" ]));
     column_bop_test "1 +: 6000" testing_1_plus_6000
       testing_1_plus_6000_res;
+    column_bop_test "1 +.: 6000" testing_1_plusf_6000
+      testing_1_plusf_6000_res;
     column_bop_test "6000 -: 1" testing_6000_minus_1
+      testing_6000_minus_1_res;
+    column_bop_test "6000 -.: 1" testing_6000_minus_1
       testing_6000_minus_1_res;
     column_bop_test "1 *: 6000" testing_1_times_6000
       testing_1_times_6000_res;
+    column_bop_test "6000 *.: 1" testing_1_timesf_6000
+      testing_1_timesf_6000_res;
     column_bop_test "6000 /: 1" testing_6000_divide_1
       testing_6000_divide_1_res;
+    column_bop_test "6000 /.: 1" testing_6000_dividef_1
+      testing_6000_dividef_1_res;
     column_bop_test "6000  %: 1" testing_6000_mod_1
       testing_6000_mod_1_res;
     function_of_int_test "square 6000"
       (List.nth testing_cols 1)
       square testing_6000_square;
+    function_of_float_test "squaref 6000"
+      (List.nth testing_cols 1)
+      squaref testing_6000_squaref;
   ]
 
 (*let order_by_test name asc tbl c e : test = name >:: fun _ ->
@@ -496,6 +567,9 @@ let order_by_tests =
        stones, Bat, cs, seven, Donlon, rain, Sad, hail";
   ]
 
+
+let group_by_tests = []
+
 let suite =
   "search test suite"
   >::: List.flatten
@@ -504,6 +578,7 @@ let suite =
            select_and_column_tests;
            where_and_column_operations_tests;
            order_by_tests;
+           group_by_tests;
          ]
 
 let _ =
