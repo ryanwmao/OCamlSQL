@@ -122,20 +122,9 @@ let airtravel_1958 =
   convert_to_c
     (Array.of_list
        [
-         "1958";
-         "340";
-         "318";
-         "362";
-         "348";
-         "363";
-         "435";
-         "491";
-         "505";
-         "404";
-         "359";
-         "310";
-         "337";
-       ])
+         "1958"; "340"; "318"; "362"; "348"; "363"; "435"; "491"; "505"; "404";
+         "359"; "310"; "337";
+       ]) [@ocamlformat "disable"]
 
 let column_relation_test name c e : test =
   name >:: fun _ -> assert_equal e c
@@ -143,38 +132,16 @@ let column_relation_test name c e : test =
 let airtravel_false_column =
   Array.of_list
     [
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-      false;
-    ]
+      false; false; false; false; false; false; false; false; false; false;
+      false; false; false;
+    ] [@ocamlformat "disable"]
 
 let airtravel_true_column =
   Array.of_list
     [
+      true; true; true; true; true; true; true; true; true; true; true; true;
       true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-      true;
-    ]
+    ] [@ocamlformat "disable"]
 
 let month_less_1958 =
   List.nth airtravel_cols 3 <: List.nth airtravel_cols 2
@@ -524,8 +491,6 @@ let order_by_tests =
       (from_csv "testing.txt")
       "6000" order_by_6000_desc;
   ]
-(*let cleanup = [ Sys.remove "airtravel_test"; Sys.remove
-  "numbers_test"; Sys.remove "empty_test"; ]*)
 
 let suite =
   "search test suite"
