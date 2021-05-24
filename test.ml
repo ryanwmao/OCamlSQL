@@ -5,72 +5,21 @@ open Table
 let readcsv_test name t e : test =
   name >:: fun _ -> assert_equal e (export_string t)
 
+let read_csv_test name t a1 a2 e : test =
+  name >:: fun _ -> assert_equal e (String.sub (export_string t) a1 a2)
+
 let readcsv_empty_test name t e : test =
   name >:: fun _ -> assert_raises e t
 
 let airtravel_data = from_csv "airtravel.csv"
 
-let airtravel_string =
-  "\n\
-   Month, JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC\n\
-   1958, 340, 318, 362, 348, 363, 435, 491, 505, 404, 359, 310, 337\n\
-   1959, 360, 342, 406, 396, 420, 472, 548, 559, 463, 407, 362, 405\n\
-   1960, 417, 391, 419, 461, 472, 535, 622, 606, 508, 461, 390, 432"
-
-let airtravel_test_string =
-  "\n\
-   Month, 1958, 1959, 1960\n\
-   JAN, 340, 360, 417\n\
-   FEB, 318, 342, 391\n\
-   MAR, 362, 406, 419\n\
-   APR, 348, 396, 461\n\
-   MAY, 363, 420, 472\n\
-   JUN, 435, 472, 535\n\
-   JUL, 491, 548, 622\n\
-   AUG, 505, 559, 606\n\
-   SEP, 404, 463, 508\n\
-   OCT, 359, 407, 461\n\
-   NOV, 310, 362, 390\n\
-   DEC, 337, 405, 432"
-
 let numbers_data = from_csv "numbers.txt"
-
-(*let numbers_export = export_csv numbers_data "numbers_test"*)
 
 let numbers_string = "\n1, 8\n2, 9\n3, 0\n4, 1\n5, 2\n6, 3\n7, 4"
 
 let numbers_test_string = "\n1, 2, 3, 4, 5, 6, 7\n8, 9, 0, 1, 2, 3, 4"
 
 let testing_data = from_csv "testing.txt"
-
-let testing_string =
-  "\n\
-   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16\n\
-   my, nice, cool, Kennedy, jack, house, kitchen, league, pennies, \
-   cowboy, Michael, Ocaml, Hat, Neeko, Samira, Daisuki\n\
-   6000, 4000, 9000, 2000, 1000, 0000, 8000, 5000, 3000, 2800, 3090, \
-   0010, 2900, 8090, 7409, 2222\n\
-   wowzers, ok, Jacob, Donlon, rain, hail, omnivamp, legend, stones, \
-   cs, Clarkson, Sad, Bat, coward, Brolit, seven"
-
-let testing_test_string =
-  "\n\
-   1, my, 6000, wowzers\n\
-   2, nice, 4000, ok\n\
-   3, cool, 9000, Jacob\n\
-   4, Kennedy, 2000, Donlon\n\
-   5, jack, 1000, rain\n\
-   6, house, 0000, hail\n\
-   7, kitchen, 8000, omnivamp\n\
-   8, league, 5000, legend\n\
-   9, pennies, 3000, stones\n\
-   10, cowboy, 2800, cs\n\
-   11, Michael, 3090, Clarkson\n\
-   12, Ocaml, 0010, Sad\n\
-   13, Hat, 2900, Bat\n\
-   14, Neeko, 8090, coward\n\
-   15, Samira, 7409, Brolit\n\
-   16, Daisuki, 2222, seven"
 
 let exports =
   [
@@ -82,19 +31,31 @@ let exports =
 
 let reading_tests =
   [
-    readcsv_test "read airtravel.csv" airtravel_data airtravel_string;
+    read_csv_test "read airtravel.csv col 1" airtravel_data 1 65
+      "Month, JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, \
+       DEC";
+    read_csv_test "read airtravel.csv col 2" airtravel_data 67 63
+      "1958, 340, 318, 362, 348, 363, 435, 491, 505, 404, 359, 310, 33";
+    read_csv_test "read airtravel.csv col 3" airtravel_data 132 64
+      "1959, 360, 342, 406, 396, 420, 472, 548, 559, 463, 407, 362, 405";
+    read_csv_test "read airtravel.csv col 4" airtravel_data 197 64
+      "1960, 417, 391, 419, 461, 472, 535, 622, 606, 508, 461, 390, 432";
     readcsv_test "read numbers.txt" numbers_data numbers_string;
-    readcsv_test "read testing.txt" testing_data testing_string;
+    read_csv_test "read testing.txt col 1" testing_data 1 53
+      "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16";
+    read_csv_test "read testing.txt" testing_data 55 115
+      "my, nice, cool, Kennedy, jack, house, kitchen, league, pennies, \
+       cowboy, Michael, Ocaml, Hat, Neeko, Samira, Daisuki";
+    read_csv_test "read testing.txt col 3" testing_data 171 94
+      "6000, 4000, 9000, 2000, 1000, 0000, 8000, 5000, 3000, 2800, \
+       3090, 0010, 2900, 8090, 7409, 2222";
+    read_csv_test "read testing.txt col 4" testing_data 266 111
+      "wowzers, ok, Jacob, Donlon, rain, hail, omnivamp, legend, \
+       stones, cs, Clarkson, Sad, Bat, coward, Brolit, seven";
     readcsv_test "read empty" empty "";
-    readcsv_test "read airtravel export"
-      (from_csv "airtravel_test")
-      airtravel_test_string;
     readcsv_test "read numbers export"
       (from_csv "numbers_test")
       numbers_test_string;
-    readcsv_test "read testing export"
-      (from_csv "testing_test")
-      testing_test_string;
     readcsv_empty_test "read empty export"
       (fun () -> from_csv "empty_test")
       End_of_file;
@@ -418,22 +379,12 @@ let where_and_column_operations_tests =
       square testing_6000_square;
   ]
 
-let order_by_test name asc tbl c e : test =
-  name >:: fun _ -> assert_equal e (export_string (order_by asc tbl c))
+(*let order_by_test name asc tbl c e : test = name >:: fun _ ->
+  assert_equal e (export_string (order_by asc tbl c))*)
 
-let order_by_1958_asc =
-  "\n\
-   Month, NOV, FEB, DEC, JAN, APR, OCT, MAR, MAY, SEP, JUN, JUL, AUG\n\
-   1958, 310, 318, 337, 340, 348, 359, 362, 363, 404, 435, 491, 505\n\
-   1959, 362, 342, 405, 360, 396, 407, 406, 420, 463, 472, 548, 559\n\
-   1960, 390, 391, 432, 417, 461, 461, 419, 472, 508, 535, 622, 606"
-
-let order_by_1958_desc =
-  "\n\
-   Month, AUG, JUL, JUN, SEP, MAY, MAR, OCT, APR, JAN, DEC, FEB, NOV\n\
-   1958, 505, 491, 435, 404, 363, 362, 359, 348, 340, 337, 318, 310\n\
-   1959, 559, 548, 472, 463, 420, 406, 407, 396, 360, 405, 342, 362\n\
-   1960, 606, 622, 535, 508, 472, 419, 461, 461, 417, 432, 391, 390"
+let orderby_test name asc tbl c a1 a2 e : test =
+  name >:: fun _ ->
+  assert_equal e (String.sub (export_string (order_by asc tbl c)) a1 a2)
 
 let order_by_Month_asc =
   "\n\
@@ -472,24 +423,50 @@ let order_by_6000_desc =
 
 let order_by_tests =
   [
-    order_by_test "order by 1958 asc" true
+    orderby_test "order by 1958 asc col 1" true
       (from_csv "airtravel.csv")
-      "1958" order_by_1958_asc;
-    order_by_test "order by 1958 desc" false
+      "1958" 1 65
+      "Month, NOV, FEB, DEC, JAN, APR, OCT, MAR, MAY, SEP, JUN, JUL, \
+       AUG";
+    orderby_test "order by 1958 asc col 2" true
       (from_csv "airtravel.csv")
-      "1958" order_by_1958_desc;
-    order_by_test "order by month asc" true
+      "1958" 67 64
+      "1958, 310, 318, 337, 340, 348, 359, 362, 363, 404, 435, 491, 505";
+    orderby_test "order by 1958 asc col 3" true
       (from_csv "airtravel.csv")
-      "Month" order_by_Month_asc;
-    order_by_test "order by month desc" false
+      "1958" 132 64
+      "1959, 362, 342, 405, 360, 396, 407, 406, 420, 463, 472, 548, 559";
+    orderby_test "order by 1958 asc col 4" true
       (from_csv "airtravel.csv")
-      "Month" order_by_Month_desc;
-    order_by_test "order by 6000 asc" true
-      (from_csv "testing.txt")
-      "6000" order_by_6000_asc;
-    order_by_test "order by 6000 desc" false
-      (from_csv "testing.txt")
-      "6000" order_by_6000_desc;
+      "1958" 197 64
+      "1960, 390, 391, 432, 417, 461, 461, 419, 472, 508, 535, 622, 606";
+    orderby_test "order by 1958 desc col 1" false
+      (from_csv "airtravel.csv")
+      "1958" 1 65
+      "Month, AUG, JUL, JUN, SEP, MAY, MAR, OCT, APR, JAN, DEC, FEB, \
+       NOV";
+    orderby_test "order by 1958 desc col 2" false
+      (from_csv "airtravel.csv")
+      "1958" 67 64
+      "1958, 505, 491, 435, 404, 363, 362, 359, 348, 340, 337, 318, 310";
+    orderby_test "order by 1958 desc col 3" false
+      (from_csv "airtravel.csv")
+      "1958" 132 64
+      "1959, 559, 548, 472, 463, 420, 406, 407, 396, 360, 405, 342, 362";
+    orderby_test "order by 1958 desc col 4" false
+      (from_csv "airtravel.csv")
+      "1958" 197 64
+      "1960, 606, 622, 535, 508, 472, 419, 461, 461, 417, 432, 391, 390";
+    (* order_by_test "order by 1958 asc" true (from_csv "airtravel.csv")
+       "1958" order_by_1958_asc; order_by_test "order by 1958 desc"
+       false (from_csv "airtravel.csv") "1958" order_by_1958_desc;
+       order_by_test "order by month asc" true (from_csv
+       "airtravel.csv") "Month" order_by_Month_asc; order_by_test "order
+       by month desc" false (from_csv "airtravel.csv") "Month"
+       order_by_Month_desc; order_by_test "order by 6000 asc" true
+       (from_csv "testing.txt") "6000" order_by_6000_asc; order_by_test
+       "order by 6000 desc" false (from_csv "testing.txt") "6000"
+       order_by_6000_desc;*)
   ]
 
 let suite =
@@ -499,6 +476,7 @@ let suite =
            reading_tests;
            select_and_column_tests;
            where_and_column_operations_tests;
+           order_by_tests;
          ]
 
 let _ =
