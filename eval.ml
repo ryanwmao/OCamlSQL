@@ -2,8 +2,9 @@ open Ast
 open Table
 open Database
 
-let evaluate_query q db = 
-  failwith "TODO"
+let eval_tables tbls = failwith "TODO"
+
+let evaluate_query (sel, tables, where, group, order) db = failwith "TODO"
 
 let get_name name name_tracker = 
   let count = try Hashtbl.find name_tracker name with Not_found -> 0 in
@@ -29,6 +30,7 @@ let rec evaluate_expr expr table =
   | Integer i -> int_to_col i length
   | Float f -> float_to_col f length
   | Column c -> Table.column table c
+  | TableAndColumn (t, c) -> failwith "TODO"
   | Str s -> (try Table.column table s with Column_not_found -> string_to_col s length)
   | Binop (bop, e1, e2) -> eval_bop bop e1 e2 table
   | Not b -> let b = evaluate_expr b table in Table.not_fn b

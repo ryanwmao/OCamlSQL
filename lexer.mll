@@ -13,6 +13,7 @@ let str = '\"' any '\"'
 rule read = 
   parse
   | white { read lexbuf }
+  | "." { DOT }
   | "*" { TIMES }
   | "+" { PLUS }
   | "-" { SUB }

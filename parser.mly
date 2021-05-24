@@ -7,6 +7,7 @@
 %token <string> STRING
 %token <string> COLUMN
 %token EQ NEQ LT GT LEQ GEQ
+%token DOT
 %token NOT
 %token PLUS
 %token TIMES
@@ -48,6 +49,21 @@ expr:
   | i = FLOAT { Float i }
   | i = BOOL { Boolean i }
   | i = COLUMN { Column i }
+  | i = STRING; DOT; j = STRING 
+    { 
+      let i = String.sub i 1 ((String.length i) - 2) in 
+      let j = String.sub j 1 ((String.length j) - 2) in 
+      TableAndColumn (i, j) 
+    }
+  | i = STRING; DOT; j = COLUMN 
+    { 
+      let i = String.sub i 1 ((String.length i) - 2) in TableAndColumn (i, j) 
+    }
+  | i = COLUMN; DOT; j = STRING 
+    { 
+      let j = String.sub j 1 ((String.length j) - 2) in TableAndColumn (i, j) 
+    }
+  | i = COLUMN; DOT; j = COLUMN { TableAndColumn (i, j) }
   | i = STRING { let s = String.sub i 1 ((String.length i) - 2) in Str s }
   | e1 = expr; AND ; e2 = expr { Binop (AND, e1, e2)}
   | e1 = expr; OR ; e2 = expr { Binop (OR, e1, e2)}

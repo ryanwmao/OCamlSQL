@@ -30,6 +30,7 @@ and expr =
   | Integer of int
   | Float of float
   | Column of string
+  | TableAndColumn of string * string
   | Str of string (* NOTE: a String could be a column name, or a string *)
   | Binop of bop * expr * expr
   | Not of expr
@@ -49,4 +50,31 @@ type query = {
 }*)
 
 type query = expressions * tables * expressions option * expressions option * order_by option
+
+let rec expressions_to_expr_list exprs = 
+  match exprs with 
+  | MultipleExpr (e, es) -> e :: (expressions_to_expr_list es)
+  | SingleExpr e -> [e]
+
+let rec string_of_expr expr = 
+  match expr with 
+  | Boolean b -> string_of_bool b
+  | Integer i -> string_of_int i
+  | Float f -> string_of_float f
+  | Column c -> c
+  | TableAndColumn (t, c) -> (add_quotes_if_needed t) ^ "." ^ (add_quotes_if_needed c)
+  | Str s -> "\"" ^ s ^ "\""
+  | Binop (bop, e1, e2) -> failwith "TODO"
+  | Not e -> "NOT " ^ string_of_expr e 
+  | Function (fn_name, es) -> fn_name ^ "(" ^ (string_of_exprs es) ^ ")"
+
+and string_of_exprs exprs =
+  let exprs = expressions_to_expr_list exprs in 
+  let res = List.map (fun a -> string_of_expr a) exprs in 
+  String.concat ", " res
+
+and add_quotes_if_needed s = 
+  if (String.contains s ' ') || (String.contains s '\t') 
+    then "\"" ^ s ^ "\"" 
+    else s
 

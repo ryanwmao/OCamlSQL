@@ -144,6 +144,10 @@ val group_no_aggregate : t -> string -> (string, int) Hashtbl.t -> c
    originally from. col_orig2 is similar. *)
 val inner_join : t -> c_orig -> t -> c_orig -> t * c_orig
 
+(* [rename tbl c_orig] is tbl with its columns renamed as necessary to
+   remove duplicates. It does the renaming in place. *)
+val rename : t -> c_orig -> unit
+
 (* Converts a boolean array into a column *)
 val col_of_bool_array : bool array -> c
 

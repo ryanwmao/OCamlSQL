@@ -438,6 +438,11 @@ let bool_array_of_col col =
 let inner_join tbl1 c_orig1 tbl2 c_orig = 
   failwith "unimplemented"
 
+(* [rename tbl c_orig] renames tbl as necessary to remove duplicate column names.
+ It does the renaming in place. *)
+let rename tbl c_orig = 
+  failwith "unimplemented"
+
 (* count aggregate function *)
 let count p n =
   if p = "" then "0" else p |> int_of_string |> ( + ) 1 |> string_of_int

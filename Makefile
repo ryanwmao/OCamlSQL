@@ -11,6 +11,7 @@ default: build
 	OCAMLRUNPARAM=b utop
 
 build:
+	ocamlbuild -use-ocamlfind command_parser.byte
 	$(OCAMLBUILD) $(OBJECTS)
 
 demo:
