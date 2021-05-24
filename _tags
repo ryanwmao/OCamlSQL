@@ -1,1 +1,1 @@
-true: package(ounit2), use_menhir
+true: package(ounit2), use_menhir, package(csv), package(ANSITerminal), package(str)
