@@ -311,4 +311,59 @@ let order_by asc tbl col_name =
   let pos_lst = position_list tbl (order_by_column asc tbl col_name) in
   t_of_columns (reorder_tbl [] (create_tbl_list 1 [] tbl) pos_lst)
 
+(* helper function for group_by *)
+let bins_of_col tbl col_name =
+  let bins = Hashtbl.create 0 in
+  Array.iteri (fun i a -> Hashtbl.add bins a i) (column tbl col_name);
+  bins
 
+(* Takes in a table, column name, aggregate function, and bin groupings,
+   returns the column with the aggregate function applied to those
+   groupings *)
+let group_aggregate tbl col_name fx bins =
+  let col = column tbl col_name in
+  let new_col = Hashtbl.create 10 in
+  Hashtbl.iter
+    (fun k v ->
+      if Hashtbl.mem new_col k then
+        Hashtbl.replace new_col k (fx (Hashtbl.find new_col k) col.(v))
+      else Hashtbl.add new_col k (fx "" col.(v)))
+    bins;
+  let str_array = ref [||] in
+  Hashtbl.iter
+    (fun k v -> str_array := Array.append !str_array [| v |])
+    new_col;
+  !str_array
+
+(* Takes in a table, column name, and groupings, and applies the
+   groupings *)
+let group_no_aggregate tbl col_name bins =
+  let col = column tbl col_name in
+  let new_col = Hashtbl.create 10 in
+  Hashtbl.iter
+    (fun k v ->
+      if not (Hashtbl.mem new_col k) then Hashtbl.add new_col k col.(v))
+    bins;
+  let str_array = ref [||] in
+  Hashtbl.iter
+    (fun k v -> str_array := Array.append !str_array [| v |])
+    new_col;
+  !str_array
+
+(* count aggregate function *)
+let count p n =
+  if p = "" then "0" else p |> int_of_string |> ( + ) 1 |> string_of_int
+
+(* sum aggregate function for int *)
+let sum_int a b =
+  a |> int_of_string |> ( + ) (int_of_string b) |> string_of_int
+
+(* sum aggregate function for float *)
+let sum_float a b =
+  a |> float_of_string |> ( +. ) (float_of_string b) |> string_of_float
+
+(* min aggregate function *)
+let min p n = if p < n then p else n
+
+(* max aggregate function *)
+let max p n = if p > n then p else n

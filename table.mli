@@ -96,3 +96,36 @@ val function_of_int : c -> (int -> int) -> c
     specified column name [col_name] and whether or not the order is
     ascending or descending [asc] *)
 val order_by : bool -> t -> string -> t
+
+(* Performs groupings based on a column in a table, and returns the bins
+   created from those groupings *)
+val bins_of_col : t -> string -> (string, int) Hashtbl.t
+
+(* Given a table, column name, aggregate function, and bin groupings,
+   performs the aggregate function on the selected column and returns a
+   new column *)
+val group_aggregate :
+  t ->
+  string ->
+  (string -> string -> string) ->
+  (string, int) Hashtbl.t ->
+  c
+
+(* Given a table, column name, and bin groupings, performs the grouping
+   and returns a new column *)
+val group_no_aggregate : t -> string -> (string, int) Hashtbl.t -> c
+
+(* Count aggregate function *)
+val count : string -> 'a -> string
+
+(* Sum aggregate function (integers) *)
+val sum_int : string -> string -> string
+
+(* Sum aggregate function (floats) *)
+val sum_float : string -> string -> string
+
+(* Min aggregate function *)
+val min : 'a -> 'a -> 'a
+
+(* Max aggregate function*)
+val max : 'a -> 'a -> 'a
