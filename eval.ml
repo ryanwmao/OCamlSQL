@@ -2,13 +2,19 @@ open Ast
 open Table
 open Database
 
-let rec eval_tables tbls db = match tbls with 
+let rec eval_tables_helper tbls db = match tbls with 
   | Table s -> let tbl = Database.get_table s db in (tbl, Table.make_c_orig tbl s)
   | InnerJoin (t1, t2) -> 
-    let (t1, c1) = eval_tables t1 db in 
-    let (t2, c2) = eval_tables t2 db in 
+    let (t1, c1) = eval_tables_helper t1 db in 
+    let (t2, c2) = eval_tables_helper t2 db in 
     Table.inner_join t1 c2 t2 c2
-  | _ -> failwith "TODO"
+  | OuterJoin (t1, t2) -> failwith "Outer join not implemented! sorry kiddo"
+  | LeftJoin (t1, t2) -> failwith "Left join not implemented! sorry kiddo"
+  | RightJoin (t1, t2) -> failwith "Right join implemented! sorry kiddo"
+
+let eval_tables tbls db = 
+  let (t, c) = eval_tables_helper tbls db in 
+  Table.rename t c; t
 
 let evaluate_query (sel, tables, where, group, order) db = failwith "TODO"
 
@@ -36,7 +42,9 @@ let rec evaluate_expr expr table =
   | Integer i -> int_to_col i length
   | Float f -> float_to_col f length
   | Column c -> Table.column table c
-  | TableAndColumn (t, c) -> failwith "TODO"
+  | TableAndColumn (t, c) -> 
+    let tc = t ^ "." ^ c in 
+    (try Table.column table tc with Column_not_found -> Table.column table c)
   | Str s -> (try Table.column table s with Column_not_found -> string_to_col s length)
   | Binop (bop, e1, e2) -> eval_bop bop e1 e2 table
   | Not b -> let b = evaluate_expr b table in Table.not_fn b
