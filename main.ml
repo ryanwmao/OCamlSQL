@@ -22,18 +22,21 @@ let rec command_loop db =
       command_loop db
 
 let main () =
-  ANSITerminal.print_string [ ANSITerminal.red ]
-    "\n\nWelcome to OCamlSQL.\n";
-  print_endline
-    "Please enter files to load \n\
-    \ \n\
-    \  (format: [tablename] [filename].[extension]).\n\
-    \  Type \"done\" when finished.";
-  let table_name = ref [] in
-  let tables = ref [] in
-  let temp_pair = table_loop table_name tables in
-  let db = Database.make_database (fst temp_pair) (snd temp_pair) in
-  print_endline "\nPlease enter commands. Type \"done\" when satisfied.";
-  command_loop db
+  try
+    ANSITerminal.print_string [ ANSITerminal.red ]
+      "\n\nWelcome to OCamlSQL.\n";
+    print_endline
+      "Please enter files to load \n\
+      \ \n\
+      \  (format: [tablename] [filename].[extension]).\n\
+      \  Type \"done\" when finished.";
+    let table_name = ref [] in
+    let tables = ref [] in
+    let temp_pair = table_loop table_name tables in
+    let db = Database.make_database (fst temp_pair) (snd temp_pair) in
+    print_endline
+      "\nPlease enter commands. Type \"done\" when satisfied.";
+    command_loop db
+  with _ -> print_endline "Error in input, please try again. "
 
 let () = main ()

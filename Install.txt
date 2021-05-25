@@ -10,7 +10,8 @@ file from which the table will be read. Click enter to add another table or
 type "done" to proceed. 
 
 Next, you will be prompted to enter SQL commands. Currently, all commands keywords
-must be capitalized, and we support SELECT, FROM, and WHERE. 
+must be capitalized, and we support SELECT, FROM, WHERE, ORDER BY, and INNER JOIN.
+NOTE that integer columns are in quotes
 
 Some examples:
 after entering "air1 airtravel2.csv" "air2 airtravel2.csv" in the first step,
