@@ -171,3 +171,6 @@ val max : 'a -> 'a -> 'a
 
 (* Renames a column to a name given as string *)
 val as_name : c -> string -> c
+
+(* Performs an inner join on two tables *)
+val inner_join : t -> t -> t

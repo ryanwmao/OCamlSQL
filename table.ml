@@ -473,3 +473,36 @@ let max p n = if p > n then p else n
 let as_name col name =
   Array.set col 0 name;
   col
+
+(* handles left side of inner join *)
+let inner_join_left col len =
+  let col2 = ref [| col.(0) |] in
+  Array.iteri
+    (fun i x ->
+      if i > 0 then
+        for j = 1 to len do
+          col2 := Array.append !col2 [| x |]
+        done)
+    col;
+  !col2
+
+(* right side of inner join *)
+let inner_join_right col len =
+  let col2 = ref [| col.(0) |] in
+  for i = 1 to len do
+    col2 := Array.append !col2 (Array.sub col 1 (Array.length col - 1))
+  done;
+  !col2
+
+(* Inner join of two tables *)
+let inner_join tbl1 tbl2 =
+  let len1 = length_of_t tbl1 in
+  let len2 = length_of_t tbl2 in
+  let cols = ref [] in
+  Hashtbl.iter
+    (fun i c -> cols := inner_join_left c len2 :: !cols)
+    tbl1.lines;
+  Hashtbl.iter
+    (fun i c -> cols := inner_join_right c len1 :: !cols)
+    tbl2.lines;
+  t_of_columns (List.rev !cols)
