@@ -1,14 +1,22 @@
 #Installation
 
 1. After opening the zip file, type ''make build'' in the terminal to build our system.
-2. Now type ''make demo'' in the terminal: this is our demo for MS2 and shows our latest feature.
+2. Now type ''make demo'' in the terminal: this is our demo for our submission.
 
 #Demo/Run
-After running 'make demo', you will be asked to type in an SQL query; this can currently
-only be of the form "select X from Y", where X are existing column names from the csv-formatted
-files in Y. For example, "Select 1958, Month from airtravel.csv" is a supported query.
-The output of every demo session query is located in the demo.txt file, which can be
-manually cleared as needed. 
+After running 'make demo', you will be prompted with a request to load files.
+These entries can be entered as the table name, followed by a space, and the
+file from which the table will be read. Click enter to add another table or 
+type "done" to proceed. 
 
-The demo file displays each selected column as a row, in the order that they 
-were entered in to the "X" field in the example query above. 
+Next, you will be prompted to enter SQL commands. Currently, all commands keywords
+must be capitalized, and we support SELECT, FROM, and WHERE. 
+
+Some examples:
+after entering "air1 airtravel2.csv" "air2 airtravel2.csv" in the first step,
+
+SELECT "1958" FROM air1 WHERE 1958 > 400 
+SELECT "1958" * 2 FROM air1
+SELECT Y1958, Y1959 FROM air2 
+SELECT Y1958, Y1959 FROM air2 ORDER BY Y1958
+SELECT Y1958, Y1959 FROM air1 INNER JOIN air2 WHERE air1.Y1958 = air2.Y1958
