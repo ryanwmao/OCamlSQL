@@ -286,7 +286,7 @@ let testing_1_plus_6000_res =
   convert_to_c 
     (Array.of_list 
       [ 
-        "6001"; "4002"; "9003"; "2004"; "1005"; "6"; "8007"; "5008"; "3009"; 
+        "4002"; "9003"; "2004"; "1005"; "6"; "8007"; "5008"; "3009"; 
         "2810"; "3101"; "22"; "2913"; "8104"; "7424"; "2238" 
       ]) [@ocamlformat "disable"]
 
@@ -294,7 +294,7 @@ let testing_1_plusf_6000_res =
   convert_to_c 
     (Array.of_list 
     [ 
-      "6001."; "4002."; "9003."; "2004."; "1005."; "6."; "8007."; "5008."; 
+      "4002."; "9003."; "2004."; "1005."; "6."; "8007."; "5008."; 
       "3009."; "2810."; "3101."; "22."; "2913."; "8104."; "7424."; "2238."
      ]) [@ocamlformat "disable"]
 
@@ -308,7 +308,7 @@ let testing_6000_minus_1_res =
   convert_to_c
     (Array.of_list 
       [
-        "5999"; "3998"; "8997"; "1996"; "995"; "-6"; "7993"; "4992"; "2991"; 
+        "3998"; "8997"; "1996"; "995"; "-6"; "7993"; "4992"; "2991"; 
         "2790"; "3079"; "-2"; "2887"; "8076"; "7394"; "2206"
       ]) [@ocamlformat "disable"]
 
@@ -316,7 +316,7 @@ let testing_6000_minusf_1_res =
   convert_to_c
     (Array.of_list 
       [
-        "5999."; "3998."; "8997."; "1996."; "995."; "-6."; "7993."; "4992."; "2991."; 
+        "3998."; "8997."; "1996."; "995."; "-6."; "7993."; "4992."; "2991."; 
         "2790."; "3079."; "-2."; "2887."; "8076."; "7394."; "2206."
       ]) [@ocamlformat "disable"]
 
@@ -330,7 +330,7 @@ let testing_1_times_6000_res =
   convert_to_c
     (Array.of_list
       [
-        "6000"; "8000"; "27000"; "8000"; "5000"; "0"; "56000"; "40000"; "27000";
+        "8000"; "27000"; "8000"; "5000"; "0"; "56000"; "40000"; "27000";
         "28000"; "33990"; "120"; "37700"; "113260"; "111135"; "35552"
       ]) [@ocamlformat "disable"]
 
@@ -338,7 +338,7 @@ let testing_1_timesf_6000_res =
   convert_to_c
   (Array.of_list
     [
-      "6000."; "8000."; "27000."; "8000."; "5000."; "0."; "56000."; "40000."; 
+      "8000."; "27000."; "8000."; "5000."; "0."; "56000."; "40000."; 
       "27000."; "28000."; "33990."; "120."; "37700."; "113260."; "111135."; 
       "35552."
     ]) [@ocamlformat "disable"]
@@ -353,7 +353,7 @@ let testing_6000_divide_1_res =
   convert_to_c
     (Array.of_list
       [
-        "6000"; "2000"; "3000"; "500"; "200"; "0"; "1142"; "625"; "333"; "280";
+        "2000"; "3000"; "500"; "200"; "0"; "1142"; "625"; "333"; "280";
         "280"; "0"; "223"; "577"; "493"; "138"
       ]) [@ocamlformat "disable"]
 
@@ -361,7 +361,7 @@ let testing_6000_dividef_1_res =
   convert_to_c
   (Array.of_list
     [
-      "6000."; "2000."; "3000."; "500."; "200."; "0."; "1142.85714286"; "625.";
+      "2000."; "3000."; "500."; "200."; "0."; "1142.85714286"; "625.";
       "333.333333333"; "280."; "280.909090909"; "0.833333333333";
       "223.076923077"; "577.857142857"; "493.933333333"; "138.875"
     ]) [@ocamlformat "disable"]
@@ -373,7 +373,7 @@ let testing_6000_mod_1_res =
   convert_to_c
     (Array.of_list
       [
-        "0"; "0"; "0"; "0"; "0"; "0"; "6"; "0"; "3"; "0"; "10"; "10"; "1"; "12";
+        "0"; "0"; "0"; "0"; "0"; "6"; "0"; "3"; "0"; "10"; "10"; "1"; "12";
         "14"; "14"
       ]) [@ocamlformat "disable"]
 
@@ -391,7 +391,7 @@ let testing_6000_square =
   convert_to_c
     (Array.of_list
       [
-        "36000000"; "16000000"; "81000000"; "4000000"; "1000000"; "0"; 
+        "16000000"; "81000000"; "4000000"; "1000000"; "0"; 
         "64000000";"25000000"; "9000000"; "7840000"; "9548100"; "100"; 
         "8410000"; "65448100"; "54893281"; "4937284"
       ]) [@ocamlformat "disable"]
@@ -400,7 +400,7 @@ let testing_6000_squaref =
   convert_to_c
     (Array.of_list
       [
-        "36000000."; "16000000."; "81000000."; "4000000."; "1000000."; "0.";
+        "16000000."; "81000000."; "4000000."; "1000000."; "0.";
         "64000000."; "25000000."; "9000000."; "7840000."; "9548100."; "100.";
         "8410000."; "65448100."; "54893281."; "4937284."
       ]) [@ocamlformat "disable"]
@@ -567,8 +567,58 @@ let order_by_tests =
        stones, Bat, cs, seven, Donlon, rain, Sad, hail";
   ]
 
+let group_no_aggregate_test name t c t2 c2 e : test =
+  name >:: fun _ ->
+  assert_equal (convert_to_c e)
+    (group_no_aggregate t c (bins_of_col t2 c2))
 
-let group_by_tests = []
+let group_no_agg_1958 =
+  [|
+    "1958"; "318"; "505"; "491"; "340"; "348"; "359"; "435"; "404"; "363"; "337";
+    "362"; "310"
+  |] [@ocamlformat "disable"]
+
+let group_no_agg_Month =
+  [|
+    "Month"; "APR"; "JAN"; "NOV"; "OCT"; "FEB"; "JUN"; "AUG"; "MAY"; "SEP";
+    "JUL"; "DEC"; "MAR"
+  |] [@ocamlformat "disable"]
+
+let group_no_agg_1958_bins_month =
+  [|
+    "1958"; "348"; "340"; "310"; "359"; "318"; "435"; "505"; "363"; "404"; "491";
+    "337"; "362"
+  |] [@ocamlformat "disable"]
+
+let group_no_agg_6000_bins_Month =
+  [|
+    "6000"; "1000"; "4000"; "0010"; "3090"; "9000"; "8000"; "3000"; "0000";
+    "2800"; "5000"; "2900"; "2000"
+  |] [@ocamlformat "disable"]
+
+let group_by_tests =
+  [
+    group_no_aggregate_test "group no agg 1958"
+      (from_csv "airtravel.csv")
+      "1958"
+      (from_csv "airtravel.csv")
+      "1958" group_no_agg_1958;
+    group_no_aggregate_test "group no agg Month"
+      (from_csv "airtravel.csv")
+      "Month"
+      (from_csv "airtravel.csv")
+      "Month" group_no_agg_Month;
+    group_no_aggregate_test "group no agg 1958 bins Month"
+      (from_csv "airtravel.csv")
+      "1958"
+      (from_csv "airtravel.csv")
+      "Month" group_no_agg_1958_bins_month;
+    group_no_aggregate_test "group no agg 6000 bins Month"
+      (from_csv "testing.txt")
+      "6000"
+      (from_csv "airtravel.csv")
+      "Month" group_no_agg_6000_bins_Month;
+  ]
 
 let suite =
   "search test suite"

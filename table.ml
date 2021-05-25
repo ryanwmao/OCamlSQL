@@ -187,15 +187,17 @@ let t_of_columns str_arr_lst =
 let rec eval_bop_int col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a -> if i = 0 then () else
-      return :=
-        Array.append !return
-          [|
-            string_of_int
-              (bop
-                 (int_of_string (Array.get col1 i))
-                 (int_of_string (Array.get col2 i)));
-          |])
+    (fun i a ->
+      if i = 0 then ()
+      else
+        return :=
+          Array.append !return
+            [|
+              string_of_int
+                (bop
+                   (int_of_string (Array.get col1 i))
+                   (int_of_string (Array.get col2 i)));
+            |])
     col1;
   !return
 
@@ -203,15 +205,17 @@ let rec eval_bop_int col1 bop col2 =
 let rec eval_bop_float col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a -> if i = 0 then () else
-      return :=
-        Array.append !return
-          [|
-            string_of_float
-              (bop
-                 (float_of_string (Array.get col1 i))
-                 (float_of_string (Array.get col2 i)));
-          |])
+    (fun i a ->
+      if i = 0 then ()
+      else
+        return :=
+          Array.append !return
+            [|
+              string_of_float
+                (bop
+                   (float_of_string (Array.get col1 i))
+                   (float_of_string (Array.get col2 i)));
+            |])
     col1;
   !return
 
@@ -219,15 +223,17 @@ let rec eval_bop_float col1 bop col2 =
 let rec eval_bop_bool col1 bop col2 =
   let return = ref [||] in
   Array.iteri
-    (fun i a -> if i = 0 then () else
-      return :=
-        Array.append !return
-          [|
-            string_of_bool
-              (bop
-                 (bool_of_string (Array.get col1 i))
-                 (bool_of_string (Array.get col2 i)));
-          |])
+    (fun i a ->
+      if i = 0 then ()
+      else
+        return :=
+          Array.append !return
+            [|
+              string_of_bool
+                (bop
+                   (bool_of_string (Array.get col1 i))
+                   (bool_of_string (Array.get col2 i)));
+            |])
     col1;
   !return
 
@@ -244,43 +250,43 @@ let ( *.: ) col1 col2 = eval_bop_float col1 ( *. ) col2
 let ( /.: ) col1 col2 = eval_bop_float col1 ( /. ) col2
 
 (* Add operator for columns *)
-let ( +: ) col1 col2 = 
-  try eval_bop_int col1 ( + ) col2 
+let ( +: ) col1 col2 =
+  try eval_bop_int col1 ( + ) col2
   with Failure _ -> eval_bop_float col1 ( +. ) col2
 
 (* Subtract operator for columns *)
-let ( -: ) col1 col2 = 
-  try eval_bop_int col1 ( - ) col2 
+let ( -: ) col1 col2 =
+  try eval_bop_int col1 ( - ) col2
   with Failure _ -> eval_bop_float col1 ( -. ) col2
 
 (* Multiply operator for columns *)
-let ( *: ) col1 col2 = 
-  try eval_bop_int col1 ( * ) col2 
+let ( *: ) col1 col2 =
+  try eval_bop_int col1 ( * ) col2
   with Failure _ -> eval_bop_float col1 ( *. ) col2
 
 (* Divide operator for columns *)
-let ( /: ) col1 col2 = 
-  try eval_bop_int col1 ( / ) col2 
+let ( /: ) col1 col2 =
+  try eval_bop_int col1 ( / ) col2
   with Failure _ -> eval_bop_float col1 ( /. ) col2
 
 (* AND operator for columns *)
-let ( &&: ) col1 col2 = 
-  eval_bop_bool col1 ( && ) col2
+let ( &&: ) col1 col2 = eval_bop_bool col1 ( && ) col2
 
 (* OR operator for columns *)
-let ( ||: ) col1 col2 = 
-  eval_bop_bool col1 ( || ) col2
+let ( ||: ) col1 col2 = eval_bop_bool col1 ( || ) col2
 
 (* NOT function for columns *)
-let not_fn col1 = 
-  Array.mapi (fun i x -> if i > 0 then x |> bool_of_string |> not |> string_of_bool else x) col1
+let not_fn col1 =
+  Array.mapi
+    (fun i x ->
+      if i > 0 then x |> bool_of_string |> not |> string_of_bool else x)
+    col1
 
 (* Mod operator for columns *)
-let ( %: ) col1 col2 = 
-  try eval_bop_int col1 ( mod ) col2 
-  with Failure _ -> 
-    let f = (fun a b -> float_of_int ((int_of_float a) mod (int_of_float b))) 
-    in
+let ( %: ) col1 col2 =
+  try eval_bop_int col1 ( mod ) col2
+  with Failure _ ->
+    let f a b = float_of_int (int_of_float a mod int_of_float b) in
     eval_bop_float col1 f col2
 
 (* apply fx to col1 *)
@@ -288,11 +294,13 @@ let rec function_of_float col1 fx =
   let return = ref [||] in
   Array.iteri
     (fun i a ->
-      return :=
-        Array.append !return
-          [|
-            string_of_float (fx (float_of_string (Array.get col1 i)));
-          |])
+      if i = 0 then ()
+      else
+        return :=
+          Array.append !return
+            [|
+              string_of_float (fx (float_of_string (Array.get col1 i)));
+            |])
     col1;
   !return
 
@@ -301,9 +309,11 @@ let rec function_of_int col1 fx =
   let return = ref [||] in
   Array.iteri
     (fun i a ->
-      return :=
-        Array.append !return
-          [| string_of_int (fx (int_of_string (Array.get col1 i))) |])
+      if i = 0 then ()
+      else
+        return :=
+          Array.append !return
+            [| string_of_int (fx (int_of_string (Array.get col1 i))) |])
     col1;
   !return
 
@@ -389,7 +399,9 @@ let order_by asc tbl col_name =
 (* helper function for group_by *)
 let bins_of_col tbl col_name =
   let bins = Hashtbl.create 0 in
-  Array.iteri (fun i a -> Hashtbl.add bins a i) (column tbl col_name);
+  Array.iteri
+    (fun i a -> if i = 0 then () else Hashtbl.add bins a i)
+    (column tbl col_name);
   bins
 
 (* Takes in a table, column name, aggregate function, and bin groupings,
@@ -408,7 +420,7 @@ let group_aggregate tbl col_name fx bins =
   Hashtbl.iter
     (fun k v -> str_array := Array.append !str_array [| v |])
     new_col;
-  !str_array
+  Array.append [| col_name |] !str_array
 
 (* Takes in a table, column name, and groupings, and applies the
    groupings *)
@@ -423,25 +435,21 @@ let group_no_aggregate tbl col_name bins =
   Hashtbl.iter
     (fun k v -> str_array := Array.append !str_array [| v |])
     new_col;
-  !str_array
+  Array.append [| col_name |] !str_array
 
-let col_of_bool_array b_array = 
+let col_of_bool_array b_array =
   Array.map (fun x -> string_of_bool x) b_array
 
-let bool_array_of_col col = 
-  Array.map (fun x -> bool_of_string x) col
+let bool_array_of_col col = Array.map (fun x -> bool_of_string x) col
 
+(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with
+   tbl2. col_orig1 describes which tables that the columns in tbl1 are
+   originally from. col_orig2 is similar. *)
+let inner_join tbl1 c_orig1 tbl2 c_orig = failwith "unimplemented"
 
-(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with tbl2.
-    col_orig1 describes which tables that the columns in tbl1 are originally from.
-    col_orig2 is similar. *)
-let inner_join tbl1 c_orig1 tbl2 c_orig = 
-  failwith "unimplemented"
-
-(* [rename tbl c_orig] renames tbl as necessary to remove duplicate column names.
- It does the renaming in place. *)
-let rename tbl c_orig = 
-  failwith "unimplemented"
+(* [rename tbl c_orig] renames tbl as necessary to remove duplicate
+   column names. It does the renaming in place. *)
+let rename tbl c_orig = failwith "unimplemented"
 
 (* count aggregate function *)
 let count p n =
