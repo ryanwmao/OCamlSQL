@@ -121,13 +121,13 @@ val function_of_int : c -> (int -> int) -> c
     column name and whether or not the order is ascending or descending *)
 val order_by : bool -> t -> string -> t
 
-(* Performs groupings based on a column in a table, and returns the bins
-   created from those groupings *)
+(** Performs groupings based on a column in a table, and returns the
+    bins created from those groupings *)
 val bins_of_col : t -> string -> (string, int) Hashtbl.t
 
-(* Given a table, column name, aggregate function, and bin groupings,
-   performs the aggregate function on the selected column and returns a
-   new column *)
+(** Given a table, column name, aggregate function, and bin groupings,
+    performs the aggregate function on the selected column and returns a
+    new column *)
 val group_aggregate :
   t ->
   string ->
@@ -135,47 +135,47 @@ val group_aggregate :
   (string, int) Hashtbl.t ->
   c
 
-(* Given a table, column name, and bin groupings, performs the grouping
-   and returns a new column *)
+(** Given a table, column name, and bin groupings, performs the grouping
+    and returns a new column *)
 val group_no_aggregate : t -> string -> (string, int) Hashtbl.t -> c
 
-(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with
-   tbl2. col_orig1 describes which tables that the columns in tbl1 are
-   originally from. col_orig2 is similar. *)
+(** [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with
+    tbl2. col_orig1 describes which tables that the columns in tbl1 are
+    originally from. col_orig2 is similar. *)
 val inner_join : t -> c_orig -> t -> c_orig -> t * c_orig
 
-(* [rename tbl c_orig] is tbl with columns renamed such that there are
-   no duplucate column names. *)
+(** [rename tbl c_orig] is tbl with columns renamed such that there are
+    no duplucate column names. *)
 val rename : t -> c_orig -> t
 
-(* [make_c_orig tbl tblname] is of type c_orig that designates all
-   columns in [tbl] as belonging to [tblname]*)
+(** [make_c_orig tbl tblname] is of type c_orig that designates all
+    columns in [tbl] as belonging to [tblname]*)
 val make_c_orig : t -> string -> c_orig
 
-(* [rename tbl c_orig] is tbl with its columns renamed as necessary to
-   remove duplicates. It does the renaming in place. *)
+(** [rename tbl c_orig] is tbl with its columns renamed as necessary to
+    remove duplicates. It does the renaming in place. *)
 val rename : t -> c_orig -> unit
 
-(* Converts a boolean array into a column *)
+(** Converts a boolean array into a column *)
 val col_of_bool_array : bool array -> c
 
-(* Converts a column into a boolean array *)
+(** Converts a column into a boolean array *)
 val bool_array_of_col : c -> bool array
 
-(* Count aggregate function *)
+(** Count aggregate function *)
 val count : string -> 'a -> string
 
-(* Sum aggregate function (integers) *)
+(** Sum aggregate function (integers) *)
 val sum_int : string -> string -> string
 
-(* Sum aggregate function (floats) *)
+(** Sum aggregate function (floats) *)
 val sum_float : string -> string -> string
 
-(* Min aggregate function *)
+(** Min aggregate function *)
 val min : 'a -> 'a -> 'a
 
-(* Max aggregate function*)
+(** Max aggregate function*)
 val max : 'a -> 'a -> 'a
 
-(* Renames a column to a name given as string *)
+(** Renames a column to a name given as string *)
 val as_name : c -> string -> unit
