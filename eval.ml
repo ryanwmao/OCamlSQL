@@ -73,6 +73,7 @@ let evaluate_query (sel, tables, where, group, order) db =
   let res_cols = List.map (fun e -> evaluate_expr e tbl) sel_exprs in
   let res_cols = List.map Table.copy_col res_cols in
   let col_names = List.map (fun e -> Ast.string_of_expr e) sel_exprs in 
-  let _ = List.map2 (fun col name -> Table.as_name col name) res_cols col_names
+  let _ = List.map2 (fun col name -> Table.as_name col name) res_cols col_names in
+  failwith "TODO"
 
 

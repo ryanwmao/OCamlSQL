@@ -6,7 +6,8 @@ type t
 (** Abstract type of values representing table columns *)
 type c
 
-(** Abstract type of values representing the original table of columns *)
+(** Abstract type of values representing the original table name of
+    columns *)
 type c_orig
 
 (** Converts column data into the abstract type representing table
