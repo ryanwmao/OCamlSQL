@@ -15,7 +15,7 @@ let rec table_loop table_name tables =
 
 let rec command_loop db =
   match read_line () with
-  | "done" -> print_endline "Thank you. "
+  | "done" -> print_endline "Thank you. \n"
   | com ->
       Eval.execute_query com db |> Table.export_string |> print_endline;
       command_loop db
@@ -32,7 +32,6 @@ let main () =
   let tables = ref [] in
   let temp_pair = table_loop table_name tables in
   let db = Database.make_database (fst temp_pair) (snd temp_pair) in
-  Database.print_db db;
   print_endline "\nPlease enter commands. Type \"done\" when satisfied.";
   command_loop db
 

@@ -16,8 +16,8 @@ type bop =
   | Div
   | Mod
 
-let string_of_bop b = 
-  match b with 
+let string_of_bop b =
+  match b with
   | AND -> "AND"
   | OR -> "OR"
   | EQ -> "="
@@ -89,7 +89,9 @@ let rec string_of_expr expr =
   | TableAndColumn (t, c) ->
       add_quotes_if_needed t ^ "." ^ add_quotes_if_needed c
   | Str s -> "\"" ^ s ^ "\""
-  | Binop (b, e1, e2) -> "(" ^ (string_of_expr e1) ^ " " ^ (string_of_bop b) ^ " " ^ (string_of_expr e1) ^ ")"
+  | Binop (b, e1, e2) ->
+      "(" ^ string_of_expr e1 ^ " " ^ string_of_bop b ^ " "
+      ^ string_of_expr e2 ^ ")"
   | Not e -> "NOT " ^ string_of_expr e
   | Function (fn_name, es) -> fn_name ^ "(" ^ string_of_exprs es ^ ")"
 

@@ -14,7 +14,7 @@ let from_csv file = { lines = readcsv file }
 let read_workspace name = { lines = readcsv (*"../workspace/"^*) name }
 
 (** Returns length of table [t] *)
-let length_of_t t = Hashtbl.length t.lines
+let length_of_t t = Array.length (Hashtbl.find t.lines 1)
 
 (** An empty database table *)
 let empty = { lines = Hashtbl.create 0 }
@@ -110,9 +110,10 @@ let rec eval_col_condition col1 rel col2 =
   let return = ref [||] in
   Array.iteri
     (fun i a ->
-      if rel (Array.get col1 i) (Array.get col2 i) then
-        return := Array.append !return [| true |]
-      else return := Array.append !return [| false |])
+      if i > 0 then
+        if rel (Array.get col1 i) (Array.get col2 i) then
+          return := Array.append !return [| true |]
+        else return := Array.append !return [| false |])
     col1;
   !return
 
