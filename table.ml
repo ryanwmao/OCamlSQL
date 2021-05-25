@@ -446,10 +446,10 @@ let bool_array_of_col col = Array.map (fun x -> bool_of_string x) col
    tbl2. col_orig1 describes which tables that the columns in tbl1 are
    originally from. col_orig2 is similar. *)
 
-let make_c_orig tbl tblname = 
-  let x = Hashtbl.create 16 in 
-  Hashtbl.iter (fun key value -> Hashtbl.add x key tblname) tbl.lines; x
-
+let make_c_orig tbl tblname =
+  let x = Hashtbl.create 16 in
+  Hashtbl.iter (fun key value -> Hashtbl.add x key tblname) tbl.lines;
+  x
 
 let inner_join tbl1 c_orig1 tbl2 c_orig = failwith "unimplemented"
 
@@ -477,8 +477,8 @@ let max p n = if p > n then p else n
 
 (* renamed column *)
 let as_name col name =
-  Array.set col 0 name;
-  col
+  let col2 = Array.set col 0 name in
+  col2
 
 (* handles left side of inner join *)
 let inner_join_left col len =
