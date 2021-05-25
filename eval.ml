@@ -105,12 +105,9 @@ let evaluate_query (sel, tables, where, group, order) db =
   let res_cols = apply_where where tbl res_cols in
   let table_result = Table.t_of_columns res_cols in
   table_result
-<<<<<<< HEAD
 
 let execute_query query db = 
   let query = Command_parser.parse_query query in 
   evaluate_query query db
 
 
-=======
->>>>>>> 99162ba6687ff00a58272486b15103602424cd85
