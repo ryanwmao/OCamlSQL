@@ -448,7 +448,7 @@ let bool_array_of_col col = Array.map (fun x -> bool_of_string x) col
 
 let make_c_orig tbl tblname = 
   let x = Hashtbl.create 16 in 
-  Hashtbl.iter (fun key value -> Hashtbl.add x key tblname) tbl; x
+  Hashtbl.iter (fun key value -> Hashtbl.add x key tblname) tbl.lines; x
 
 
 let inner_join tbl1 c_orig1 tbl2 c_orig = failwith "unimplemented"

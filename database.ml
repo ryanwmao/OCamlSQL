@@ -11,6 +11,9 @@ let make_database table_names tables =
   List.iter2 (fun a b -> d := Database.add a b !d) table_names tables;
   !d
 
+let get_table tblname db = 
+  Database.find tblname db 
+
 let execute_query query db = 
   failwith "TODO"
 
