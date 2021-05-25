@@ -16,6 +16,22 @@ type bop =
   | Div
   | Mod
 
+let string_of_bop b = 
+  match b with 
+  | AND -> "AND"
+  | OR -> "OR"
+  | EQ -> "="
+  | NEQ -> "!="
+  | GT -> ">"
+  | LT -> "<"
+  | GEQ -> ">="
+  | LEQ -> "<="
+  | Add -> "+"
+  | Sub -> "-"
+  | Mult -> "*"
+  | Div -> "/"
+  | Mod -> "%"
+
 (** [tables] is the type for tables *)
 type tables =
   | Table of string
@@ -73,7 +89,7 @@ let rec string_of_expr expr =
   | TableAndColumn (t, c) ->
       add_quotes_if_needed t ^ "." ^ add_quotes_if_needed c
   | Str s -> "\"" ^ s ^ "\""
-  | Binop (bop, e1, e2) -> failwith "TODO"
+  | Binop (b, e1, e2) -> "(" ^ (string_of_expr e1) ^ " " ^ (string_of_bop b) ^ " " ^ (string_of_expr e1) ^ ")"
   | Not e -> "NOT " ^ string_of_expr e
   | Function (fn_name, es) -> fn_name ^ "(" ^ string_of_exprs es ^ ")"
 
