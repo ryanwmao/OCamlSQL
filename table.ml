@@ -478,6 +478,8 @@ let max p n = if p > n then p else n
 (* renamed column *)
 let as_name col name = Array.set col 0 name
 
+let copy_col col = Array.copy col
+
 (* handles left side of inner join *)
 let inner_join_left col len =
   let col2 = ref [| col.(0) |] in

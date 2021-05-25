@@ -16,8 +16,6 @@ let eval_tables tbls db =
   let (t, c) = eval_tables_helper tbls db in 
   Table.rename t c; t
 
-let evaluate_query (sel, tables, where, group, order) db = failwith "TODO"
-
 let get_name name name_tracker = 
   let count = try Hashtbl.find name_tracker name with Not_found -> 0 in
   let _ = Hashtbl.add name_tracker name (count + 1) in
@@ -68,3 +66,13 @@ and eval_bop bop e1 e2 table =
   | LT -> cba (v1 <: v2)
   | GEQ -> cba (v1 >=: v2)
   | LEQ -> cba(v1 <=: v2)
+
+let evaluate_query (sel, tables, where, group, order) db = 
+  let tbl = eval_tables tables db in 
+  let sel_exprs = Ast.expressions_to_expr_list sel in 
+  let res_cols = List.map (fun e -> evaluate_expr e tbl) sel_exprs in
+  let res_cols = List.map Table.copy_col res_cols in
+  let col_names = List.map (fun e -> Ast.string_of_expr e) sel_exprs in 
+  let _ = List.map2 (fun col name -> Table.as_name col name) res_cols col_names
+
+

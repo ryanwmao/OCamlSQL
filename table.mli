@@ -180,5 +180,8 @@ val max : 'a -> 'a -> 'a
 (* Renames a column to a name given as string *)
 val as_name : c -> string -> c
 
+(* Makes a deep copy of column [c]*)
+val copy_col : c -> c
+
 (* Performs an inner join on two tables *)
 val inner_join : t -> t -> t
