@@ -2,7 +2,8 @@ open Ast
 open Table
 open Database
 
-let eval_tables tbls = failwith "TODO"
+let eval_tables tbls = match tbls with 
+  | Table s -> 
 
 let evaluate_query (sel, tables, where, group, order) db = failwith "TODO"
 
