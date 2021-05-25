@@ -1,6 +1,5 @@
 open Ast
 open Table
-open Database
 
 let rec eval_tables_helper tbls db =
   match tbls with

@@ -2,7 +2,7 @@ open Table
 
 module Dad = Map.Make(String)
 
-type t = Table.t Dad.t
+type k = Table.t Dad.t
 
 let empty_database () = Dad.empty
 
