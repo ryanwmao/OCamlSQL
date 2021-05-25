@@ -9,3 +9,5 @@ val make_database : string list -> Table.t list -> k
 
 (** Gets a table from the database *)
 val get_table : string -> k -> Table.t
+
+val print_db : k -> unit
