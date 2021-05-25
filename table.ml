@@ -476,9 +476,7 @@ let min p n = if p < n then p else n
 let max p n = if p > n then p else n
 
 (* renamed column *)
-let as_name col name =
-  let col2 = Array.set col 0 name in
-  col2
+let as_name col name = Array.set col 0 name
 
 (* handles left side of inner join *)
 let inner_join_left col len =
