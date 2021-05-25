@@ -18,6 +18,7 @@ let rec command_loop db =
   | "done" -> print_endline "Thank you. \n"
   | com ->
       Eval.execute_query com db |> Table.export_string |> print_endline;
+      print_endline "\n";
       command_loop db
 
 let main () =
@@ -26,7 +27,7 @@ let main () =
   print_endline
     "Please enter files to load \n\
     \ \n\
-    \    (format: [tablename] [filename].[extension]).\n\
+    \  (format: [tablename] [filename].[extension]).\n\
     \  Type \"done\" when finished.";
   let table_name = ref [] in
   let tables = ref [] in
