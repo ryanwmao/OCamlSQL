@@ -2,7 +2,13 @@ open Ast
 open Table
 open Database
 
-let eval_tables tbls = failwith "TODO"
+let rec eval_tables tbls db = match tbls with 
+  | Table s -> let tbl = Database.get_table s db in (tbl, Table.make_c_orig tbl s)
+  | InnerJoin (t1, t2) -> 
+    let (t1, c1) = eval_tables t1 db in 
+    let (t2, c2) = eval_tables t2 db in 
+    Table.inner_join t1 c2 t2 c2
+  | _ -> failwith "TODO"
 
 let evaluate_query (sel, tables, where, group, order) db = failwith "TODO"
 
