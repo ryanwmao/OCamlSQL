@@ -501,7 +501,7 @@ let inner_join_right col len =
   !col2
 
 (* Inner join of two tables *)
-let inner_join tbl1 tbl2 =
+let inner_join tbl1 c_orig1 tbl2 c_orig2 =
   let len1 = length_of_t tbl1 in
   let len2 = length_of_t tbl2 in
   let cols = ref [] in
@@ -511,4 +511,10 @@ let inner_join tbl1 tbl2 =
   Hashtbl.iter
     (fun i c -> cols := inner_join_right c len1 :: !cols)
     tbl2.lines;
-  t_of_columns (List.rev !cols)
+  let new_c_orig = Hashtbl.create 0 in
+  Hashtbl.iter (fun k v -> Hashtbl.add new_c_orig k v) c_orig1;
+  Hashtbl.iter
+    (fun k v ->
+      Hashtbl.add new_c_orig (k + Hashtbl.length tbl1.lines) v)
+    c_orig2;
+  (t_of_columns (List.rev !cols), new_c_orig)
