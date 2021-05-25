@@ -15,5 +15,6 @@ let get_table tblname db =
   Database.find tblname db 
 
 let execute_query query db = 
-  failwith "TODO"
+  let query = Command_parser.parse_query query in 
+  Eval.evaluate_query query db
 
