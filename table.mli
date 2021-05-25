@@ -183,6 +183,3 @@ val as_name : c -> string -> unit
 
 (* Makes a deep copy of column [c]*)
 val copy_col : c -> c
-
-(* Performs an inner join on two tables *)
-val inner_join : t -> t -> t
