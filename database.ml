@@ -14,7 +14,3 @@ let make_database table_names tables =
 let get_table tblname db = 
   Dad.find tblname db 
 
-let execute_query query db = 
-  let query = Command_parser.parse_query query in 
-  Eval.evaluate_query query db
-
