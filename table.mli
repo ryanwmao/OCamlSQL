@@ -120,7 +120,7 @@ val function_of_int : c -> (int -> int) -> c
 
 (** Applies the order_by sortings to the given table given the specified
     column name and whether or not the order is ascending or descending *)
-val order_by : bool -> t -> string -> t
+val order_by : bool -> t -> c -> t
 
 (** Performs groupings based on a column in a table, and returns the
     bins created from those groupings *)

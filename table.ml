@@ -330,8 +330,7 @@ let compare asc s1 s2 =
 (* Applies the comparator to the specified [col_name] by the order_by
    statement for the given table [tbl] and depending on if [asc] is
    ascending (true) or descending (false) *)
-let order_by_column asc tbl col_name =
-  let col = search tbl col_name 1 in
+let order_by_column asc tbl col =
   let col1 = Array.sub col 1 (Array.length col - 1) in
   Array.sort (compare asc) col1;
   Array.append (Array.sub col 0 1) col1
@@ -394,8 +393,8 @@ let rec reorder_tbl acc tbl_list pos_lst =
 (* Applies the order_by sortings to the given table [tbl] given the
    specified column name [col_name] and whether or not the order is
    ascending or descending [asc] *)
-let order_by asc tbl col_name =
-  let pos_lst = position_list tbl (order_by_column asc tbl col_name) in
+let order_by asc tbl col =
+  let pos_lst = position_list tbl (order_by_column asc tbl col) in
   t_of_columns (reorder_tbl [] (create_tbl_list 1 [] tbl) pos_lst)
 
 (* helper function for group_by *)

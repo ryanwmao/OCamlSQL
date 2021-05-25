@@ -83,6 +83,16 @@ let evaluate_where_clause exprs table =
   | [] -> failwith "UNKNOWN"
   | h :: t -> List.fold_left (fun a b -> a &&: b) h t
 
+
+let evaluate_orderby_clause exprs table = 
+  let exprs = Ast.expressions_to_expr_list exprs in
+  let e = match exprs with 
+    | h :: t -> h
+    | [] -> failwith "unknown"
+  in 
+  let e = evaluate_expr e table in 
+  e
+
 let apply_where opt_exprs orig_table columns =
   match opt_exprs with
   | Some exprs ->
@@ -90,6 +100,16 @@ let apply_where opt_exprs orig_table columns =
       let c_bool = Table.bool_array_of_col c_bool in
       List.map (Table.where_col_filter c_bool) columns
   | None -> columns
+
+let apply_orderby opt_exprs table = 
+  match opt_exprs with 
+  | Some (AS exprs) ->
+    let c = evaluate_orderby_clause exprs table in 
+    Table.order_by true table c
+  | Some (DE exprs) ->
+    let c = evaluate_orderby_clause exprs table in 
+    Table.order_by false table c
+  | None -> table
 
 let evaluate_query (sel, tables, where, group, order) db =
   let tbl = eval_tables tables db in
@@ -104,6 +124,7 @@ let evaluate_query (sel, tables, where, group, order) db =
   in
   let res_cols = apply_where where tbl res_cols in
   let table_result = Table.t_of_columns res_cols in
+  let table_result = apply_orderby order table_result in 
   table_result
 
 let execute_query query db = 
