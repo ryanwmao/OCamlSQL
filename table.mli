@@ -178,7 +178,7 @@ val min : 'a -> 'a -> 'a
 val max : 'a -> 'a -> 'a
 
 (* Renames a column to a name given as string *)
-val as_name : c -> string -> c
+val as_name : c -> string -> unit
 
 (* Makes a deep copy of column [c]*)
 val copy_col : c -> c
