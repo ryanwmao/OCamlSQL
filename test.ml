@@ -493,123 +493,6 @@ let where_and_column_operations_tests =
       squaref testing_6000_squaref;
   ]
 
-(*let order_by_test name asc tbl c e : test = name >:: fun _ ->
-  assert_equal e (export_string (order_by asc tbl c))*)
-
-let orderby_test name asc tbl c a1 a2 e : test =
-  name >:: fun _ ->
-  assert_equal e (String.sub (export_string (order_by asc tbl c)) a1 a2)
-
-let order_by_tests =
-  [
-    orderby_test "order by 1958 asc col 1" true
-      (from_csv "airtravel.csv")
-      "1958" 1 65
-      "Month, NOV, FEB, DEC, JAN, APR, OCT, MAR, MAY, SEP, JUN, JUL, \
-       AUG";
-    orderby_test "order by 1958 asc col 2" true
-      (from_csv "airtravel.csv")
-      "1958" 67 64
-      "1958, 310, 318, 337, 340, 348, 359, 362, 363, 404, 435, 491, 505";
-    orderby_test "order by 1958 asc col 3" true
-      (from_csv "airtravel.csv")
-      "1958" 132 64
-      "1959, 362, 342, 405, 360, 396, 407, 406, 420, 463, 472, 548, 559";
-    orderby_test "order by 1958 asc col 4" true
-      (from_csv "airtravel.csv")
-      "1958" 197 64
-      "1960, 390, 391, 432, 417, 461, 461, 419, 472, 508, 535, 622, 606";
-    orderby_test "order by 1958 desc col 1" false
-      (from_csv "airtravel.csv")
-      "1958" 1 65
-      "Month, AUG, JUL, JUN, SEP, MAY, MAR, OCT, APR, JAN, DEC, FEB, \
-       NOV";
-    orderby_test "order by 1958 desc col 2" false
-      (from_csv "airtravel.csv")
-      "1958" 67 64
-      "1958, 505, 491, 435, 404, 363, 362, 359, 348, 340, 337, 318, 310";
-    orderby_test "order by 1958 desc col 3" false
-      (from_csv "airtravel.csv")
-      "1958" 132 64
-      "1959, 559, 548, 472, 463, 420, 406, 407, 396, 360, 405, 342, 362";
-    orderby_test "order by 1958 desc col 4" false
-      (from_csv "airtravel.csv")
-      "1958" 197 64
-      "1960, 606, 622, 535, 508, 472, 419, 461, 461, 417, 432, 391, 390";
-    orderby_test "order by month asc col 1" true
-      (from_csv "airtravel.csv")
-      "Month" 1 65
-      "Month, APR, AUG, DEC, FEB, JAN, JUL, JUN, MAR, MAY, NOV, OCT, \
-       SEP";
-    orderby_test "order by month asc col 2" true
-      (from_csv "airtravel.csv")
-      "Month" 67 64
-      "1958, 348, 505, 337, 318, 340, 491, 435, 362, 363, 310, 359, 404";
-    orderby_test "order by month asc col 3" true
-      (from_csv "airtravel.csv")
-      "Month" 132 64
-      "1959, 396, 559, 405, 342, 360, 548, 472, 406, 420, 362, 407, 463";
-    orderby_test "order by month asc col 4" true
-      (from_csv "airtravel.csv")
-      "Month" 197 64
-      "1960, 461, 606, 432, 391, 417, 622, 535, 419, 472, 390, 461, 508";
-    orderby_test "order by month desc col 1" false
-      (from_csv "airtravel.csv")
-      "Month" 1 65
-      "Month, SEP, OCT, NOV, MAY, MAR, JUN, JUL, JAN, FEB, DEC, AUG, \
-       APR";
-    orderby_test "order by month desc col 2" false
-      (from_csv "airtravel.csv")
-      "Month" 67 64
-      "1958, 404, 359, 310, 363, 362, 435, 491, 340, 318, 337, 505, 348";
-    orderby_test "order by month desc col 3" false
-      (from_csv "airtravel.csv")
-      "Month" 132 64
-      "1959, 463, 407, 362, 420, 406, 472, 548, 360, 342, 405, 559, 396";
-    orderby_test "order by month desc col 4" false
-      (from_csv "airtravel.csv")
-      "Month" 197 64
-      "1960, 508, 461, 390, 472, 419, 535, 622, 417, 391, 432, 606, 461";
-    orderby_test "order by 6000 asc col 1" true
-      (from_csv "testing.txt")
-      "6000" 1 53
-      "1, 6, 12, 5, 4, 16, 10, 13, 9, 11, 2, 8, 15, 7, 14, 3";
-    orderby_test "order by 6000 asc col 2" true
-      (from_csv "testing.txt")
-      "6000" 55 115
-      "my, house, Ocaml, jack, Kennedy, Daisuki, cowboy, Hat, pennies, \
-       Michael, nice, league, Samira, kitchen, Neeko, cool";
-    orderby_test "order by 6000 asc col 3" true
-      (from_csv "testing.txt")
-      "6000" 171 94
-      "6000, 0000, 0010, 1000, 2000, 2222, 2800, 2900, 3000, 3090, \
-       4000, 5000, 7409, 8000, 8090, 9000";
-    orderby_test "order by 6000 asc col 4" true
-      (from_csv "testing.txt")
-      "6000" 266 111
-      "wowzers, hail, Sad, rain, Donlon, seven, cs, Bat, stones, \
-       Clarkson, ok, legend, Brolit, omnivamp, coward, Jacob";
-    orderby_test "order by 6000 desc col 1" false
-      (from_csv "testing.txt")
-      "6000" 1 53
-      "1, 3, 14, 7, 15, 8, 2, 11, 9, 13, 10, 16, 4, 5, 12, 6";
-    orderby_test "order by 6000 desc col 2" false
-      (from_csv "testing.txt")
-      "6000" 55 115
-      "my, cool, Neeko, kitchen, Samira, league, nice, Michael, \
-       pennies, Hat, cowboy, Daisuki, Kennedy, jack, Ocaml, house";
-    orderby_test "order by 6000 desc col 3" false
-      (from_csv "testing.txt")
-      "6000" 171 94
-      "6000, 9000, 8090, 8000, 7409, 5000, 4000, 3090, 3000, 2900, \
-       2800, 2222, 2000, 1000, 0010, 0000";
-    orderby_test "order by 6000 desc col 4" false
-      (from_csv "testing.txt")
-      "6000" 266 111
-      "wowzers, Jacob, coward, omnivamp, Brolit, legend, ok, Clarkson, \
-       stones, Bat, cs, seven, Donlon, rain, Sad, hail";
-  ]
-
 let group_no_aggregate_test name t c t2 c2 e : test =
   name >:: fun _ ->
   assert_equal (convert_to_c e)
@@ -697,7 +580,6 @@ let suite =
            reading_tests;
            select_and_column_tests;
            where_and_column_operations_tests;
-           order_by_tests;
            group_by_tests;
            extra_functions_tests;
          ]
