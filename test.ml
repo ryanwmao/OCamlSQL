@@ -2,6 +2,49 @@ open OUnit2
 open Readcsv
 open Table
 
+(** TEST PLAN: Our test suite tests almost all of the functions that are
+    used in our table.ml file, which are essentially the SQL functions
+    that are called on the top level. We used a mixture of black box and
+    white box testing to ensure that our functions work properly. The
+    majority of test cases are simple tests to ensure our system's base
+    functionality. We created and found online csv and txt files written
+    in csv format to test the functions written in table.ml. We mostly
+    used airtravel.csv and testing.txt for our testing purposes. White
+    box testing was first performed on the individual helper functions
+    that our SQL functions used to check over certain edge cases and
+    solve anticipated/existing issues before testing the overall main
+    functions. We used black box testing to check the main functions in
+    order to test the overall functionality of our system and that the
+    interaction between everything works. We mainly tested the table.ml
+    functions in our test suite, because we manually tested our
+    parsing/lexing functionality by running our program and seeing if
+    our system performed the correct operations given acceptable
+    commands. However, we could only test these capabilities after
+    knowing that the functions that our system uses work properly.
+    Hence, we tested the table.ml functions first in our OUnit test
+    suite before moving onto manual testing. Our OUnit test suite also
+    ensures the functionality of our readcsv.ml file, as most of our
+    tests use a mixture of functions form table.ml and readcsv.ml at the
+    same time. These functions were relatively simple to test as we only
+    had to check if we could properly read data from a given file and
+    print our own data to a specified file. Thus, we tested our file
+    parsing and printing capabilities by reading data from various
+    files, using that data to run the helper and main functions in
+    table.ml and then print the resulting output onto various files and
+    checking if everything is correct. Our Ast.ml, command_parser.ml,
+    database.ml, eval.ml, and parser_main.ml files were mainly tested
+    manually in the top level. As we already checked over our system's
+    base functionality by testing readcsv and table in our OUnit test
+    suite, we knew that errors from testing in the top level were most
+    likely due to errors in the parsing/lexing/interpreting files or due
+    to issues in how we integrated everything. While our OUnit test
+    suite is not exhaustive, it adequately demonstrates our
+    implementations of SQL functions and file operations. Thus, we
+    believe our OUnit test suite and manual testing on the top level are
+    thorough enough to guarantee the correctness of our system, as we
+    thoroughly tested the individual components of our system separately
+    using the OUnit test suite and tested the overall interactions
+    between our components through the manual testing. *)
 let readcsv_test name t e : test =
   name >:: fun _ -> assert_equal e (export_string t)
 
@@ -620,6 +663,33 @@ let group_by_tests =
       "Month" group_no_agg_6000_bins_Month;
   ]
 
+let count_test name s a e : test =
+  name >:: fun _ -> assert_equal e (count s a)
+
+let sum_int_test name s1 s2 e : test =
+  name >:: fun _ -> assert_equal e (sum_int s1 s2)
+
+let sum_float_test name s1 s2 e : test =
+  name >:: fun _ -> assert_equal e (sum_float s1 s2)
+
+let min_test name a1 a2 e : test =
+  name >:: fun _ -> assert_equal e (min a1 a2)
+
+let max_test name a1 a2 e : test =
+  name >:: fun _ -> assert_equal e (max a1 a2)
+
+let extra_functions_tests =
+  [
+    count_test "count 4 = 5" "4" 4 "5";
+    sum_int_test "sum 5, 6 = 11" "5" "6" "11";
+    sum_float_test "sum 500000000000, 600000000000 = 1100000000000"
+      "500000000000" "600000000000" "1.1e+12";
+    min_test "min 5 4 = 4 (int)" 5 4 4;
+    min_test "min 5 4 = 4 (string)" "5" "4" "4";
+    max_test "max 5 4 = 5 (int)" 5 4 5;
+    max_test "max 5 4 = 5 (string)" "5" "4" "5";
+  ]
+
 let suite =
   "search test suite"
   >::: List.flatten
@@ -629,6 +699,7 @@ let suite =
            where_and_column_operations_tests;
            order_by_tests;
            group_by_tests;
+           extra_functions_tests;
          ]
 
 let _ =
