@@ -442,20 +442,20 @@ let col_of_bool_array b_array =
 
 let bool_array_of_col col = Array.map (fun x -> bool_of_string x) col
 
-(* [inner_join tbl1 col_orig1 tbl2 col_orig2] is tbl1 inner joined with
-   tbl2. col_orig1 describes which tables that the columns in tbl1 are
-   originally from. col_orig2 is similar. *)
-
 let make_c_orig tbl tblname =
   let x = Hashtbl.create 16 in
   Hashtbl.iter (fun key value -> Hashtbl.add x key tblname) tbl.lines;
   x
 
-let inner_join tbl1 c_orig1 tbl2 c_orig = failwith "unimplemented"
-
 (* [rename tbl c_orig] renames tbl as necessary to remove duplicate
    column names. It does the renaming in place. *)
-let rename tbl c_orig = failwith "unimplemented"
+let rename tbl c_orig =
+  let seen = Hashtbl.create 10 in
+  Hashtbl.iter
+    (fun i c ->
+      if not (Hashtbl.mem seen c.(0)) then Hashtbl.add seen c.(0) ()
+      else c.(0) <- Hashtbl.find c_orig i ^ "." ^ c.(0))
+    tbl.lines
 
 (* count aggregate function *)
 let count p n =
