@@ -168,3 +168,6 @@ val min : 'a -> 'a -> 'a
 
 (* Max aggregate function*)
 val max : 'a -> 'a -> 'a
+
+(* Renames a column to a name given as string *)
+val as_name : c -> string -> c

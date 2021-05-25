@@ -468,3 +468,8 @@ let min p n = if p < n then p else n
 
 (* max aggregate function *)
 let max p n = if p > n then p else n
+
+(* renamed column *)
+let as_name col name =
+  Array.set col 0 name;
+  col
