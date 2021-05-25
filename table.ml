@@ -49,8 +49,9 @@ let export_string t =
         ""
         (Hashtbl.find t.lines i)
     in
-    let line = String.sub temp 2 (String.length temp - 2) in
-    str := !str ^ "\n" ^ line
+    if String.length temp > 2 then
+      let line = String.sub temp 2 (String.length temp - 2) in
+      str := !str ^ "\n" ^ line
   done;
   !str
 
