@@ -6,7 +6,8 @@ type t
 (** Abstract type of values representing table columns *)
 type c
 
-(** Abstract type of values representing the original table of columns *)
+(** Abstract type of values representing the original table name of
+    columns *)
 type c_orig
 
 (** Converts column data into the abstract type representing table
@@ -179,3 +180,9 @@ val max : 'a -> 'a -> 'a
 
 (** Renames a column to a name given as string *)
 val as_name : c -> string -> unit
+
+(* Makes a deep copy of column [c]*)
+val copy_col : c -> c
+
+(* Performs an inner join on two tables *)
+val inner_join : t -> t -> t
