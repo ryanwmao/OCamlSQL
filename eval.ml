@@ -67,6 +67,21 @@ and eval_bop bop e1 e2 table =
   | GEQ -> cba (v1 >=: v2)
   | LEQ -> cba(v1 <=: v2)
 
+let evaluate_where_clause exprs table = 
+  let exprs = Ast.expressions_to_expr_list exprs in 
+  let exprs = List.map (fun e -> evaluate_expr e table) exprs in 
+  match exprs with 
+  | [] -> failwith "UNKNOWN"
+  | h :: t -> List.fold_left (fun a b -> a &&: b) h t
+
+let apply_where opt_exprs orig_table columns = 
+  match opt_exprs with 
+  | Some exprs -> 
+    let c_bool = evaluate_where_clause exprs orig_table in 
+    let c_bool = Table.bool_array_of_col c_bool in 
+    List.map (Table.where_col_filter c_bool) columns
+  | None -> columns 
+
 let evaluate_query (sel, tables, where, group, order) db = 
   let tbl = eval_tables tables db in 
   let sel_exprs = Ast.expressions_to_expr_list sel in 
@@ -74,6 +89,8 @@ let evaluate_query (sel, tables, where, group, order) db =
   let res_cols = List.map Table.copy_col res_cols in
   let col_names = List.map (fun e -> Ast.string_of_expr e) sel_exprs in 
   let _ = List.map2 (fun col name -> Table.as_name col name) res_cols col_names in
-  failwith "TODO"
+  let res_cols = apply_where where tbl res_cols in 
+  let table_result = Table.t_of_columns res_cols in
+  table_result
 
 

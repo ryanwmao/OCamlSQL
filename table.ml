@@ -269,10 +269,10 @@ let ( /: ) col1 col2 =
   try eval_bop_int col1 ( / ) col2
   with Failure _ -> eval_bop_float col1 ( /. ) col2
 
-(* AND operator for columns *)
+(* Logical AND operator for columns *)
 let ( &&: ) col1 col2 = eval_bop_bool col1 ( && ) col2
 
-(* OR operator for columns *)
+(* Logical OR operator for columns *)
 let ( ||: ) col1 col2 = eval_bop_bool col1 ( || ) col2
 
 (* NOT function for columns *)
