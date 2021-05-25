@@ -1,16 +1,39 @@
-(* open Readcsv open Table open Command_parser
+open Readcsv
+open Table
+open Command_parser
 
-   let exec_command com name = Workspace.read_command com name let
-   read_command name = print_endline "Please enter the command. \n";
-   match read_line () with | exception a -> () | com -> exec_command com
-   name
+let rec table_loop () =
+  let table_name = ref [] in
+  let tables = ref [] in
+  match read_line () with
+  | "done" ->
+      print_endline "Thank you. ";
+      (!table_name, !tables)
+  | com ->
+      let temp = String.split_on_char ' ' com in
+      table_name := List.hd temp :: !table_name;
+      tables := Table.from_csv (List.hd (List.tl temp)) :: !tables;
+      table_loop ()
 
-   let read_csv file = print_csv (from_csv file) "demo.txt";
-   read_command "demo.txt"
+let rec command_loop db =
+  match read_line () with
+  | "done" -> print_endline "Thank you. "
+  | com ->
+      Database.execute_query com db
+      |> Table.export_string |> print_endline;
+      command_loop db
 
-   let main () = ANSITerminal.print_string [ ANSITerminal.red ]
-   "\n\nWelcome to OCamlSQL.\n"; print_endline "Please enter the
-   command.\n"; match read_line () with | exception End_of_file -> () |
-   com -> exec_command com "demo.txt"
+let main () =
+  ANSITerminal.print_string [ ANSITerminal.red ]
+    "\n\nWelcome to OCamlSQL.\n";
+  print_endline
+    "Please enter files to load (format: \n\n\
+    \    [tablename] [filename].[extension]).\n\
+    \ Type \"done\" when finished.";
+  let temp_pair = table_loop () in
+  let db = Database.make_database (fst temp_pair) (snd temp_pair) in
+  print_endline
+    "\nPlease enter commands.\n Type \"done\" when satisfied.";
+  command_loop db
 
-   let () = main () *)
+let () = main ()
